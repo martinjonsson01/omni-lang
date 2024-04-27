@@ -28,7 +28,7 @@ library:
   source-dirs: src
 
 executables:
-  omni-cli-exe:
+  omnic:
     main:                Main.hs
     source-dirs:         app
     dependencies:

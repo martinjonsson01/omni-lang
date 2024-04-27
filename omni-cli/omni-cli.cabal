@@ -19,7 +19,6 @@ library
       Import
       Run
       Types
-      Util
   other-modules:
       Paths_omni_cli
   autogen-modules:
@@ -33,7 +32,7 @@ library
     , rio
   default-language: Haskell2010
 
-executable omni-cli-exe
+executable omnic
   main-is: Main.hs
   other-modules:
       Paths_omni_cli

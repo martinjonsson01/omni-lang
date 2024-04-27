@@ -4,7 +4,7 @@ cradle:
       component: "omni-cli:lib"
 
     - path: "omni-cli/app/Main.hs"
-      component: "omni-cli:exe:omni-cli-exe"
+      component: "omni-cli:exe:omnic"
 
     - path: "omni-lib/src"
       component: "omni-lib:lib"
