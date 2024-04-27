@@ -1,0 +1,91 @@
+name:                omni-lib
+version:             0.1.0
+license:             BSD-3-Clause
+author:              Martin Jonsson
+maintainer:          martinjonsson01@gmail.com
+copyright:           2024 Martin Jonsson
+
+extra-source-files:
+- README.md
+
+dependencies:
+- base
+- text
+- bytestring
+- mtl
+- containers
+- pretty-show
+- pretty
+- llvm-pretty
+- conduit-extra
+- async
+
+default-extensions:
+- ImportQualifiedPost
+- BangPatterns
+- BinaryLiterals
+- ConstraintKinds
+- DataKinds
+- DefaultSignatures
+- DeriveDataTypeable
+- DeriveFoldable
+- DeriveFunctor
+- DeriveGeneric
+- DeriveTraversable
+- DoAndIfThenElse
+- EmptyDataDecls
+- ExistentialQuantification
+- FlexibleContexts
+- FlexibleInstances
+- FunctionalDependencies
+- GADTs
+- GeneralizedNewtypeDeriving
+- InstanceSigs
+- KindSignatures
+- LambdaCase
+- MultiParamTypeClasses
+- MultiWayIf
+- NamedFieldPuns
+- OverloadedStrings
+- PartialTypeSignatures
+- PatternGuards
+- PolyKinds
+- RankNTypes
+- RecordWildCards
+- ScopedTypeVariables
+- StandaloneDeriving
+- TupleSections
+- TypeFamilies
+- TypeSynonymInstances
+- ViewPatterns
+
+ghc-options:
+- -Wall
+- -Wcompat
+- -Widentities
+- -Wincomplete-record-updates
+- -Wincomplete-uni-patterns
+- -Wmissing-export-lists
+- -Wmissing-home-modules
+- -Wpartial-fields
+- -Wredundant-constraints
+
+library:
+  source-dirs: src
+
+tests:
+  omni-lib-test:
+    main:                Spec.hs
+    source-dirs:         test
+    dependencies:
+    - omni-lib
+    - sydtest
+
+    build-tools:
+      sydtest-discover:sydtest-discover
+
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+

@@ -1,0 +1,51 @@
+cabal-version: 2.2
+
+-- This file has been generated from package.yaml by hpack version 0.36.0.
+--
+-- see: https://github.com/sol/hpack
+
+name:           omni-cli
+version:        0.1.0
+author:         Martin Jonsson
+maintainer:     martinjonsson01@gmail.com
+copyright:      2024 Martin Jonsson
+license:        BSD-3-Clause
+build-type:     Simple
+extra-source-files:
+    README.md
+
+library
+  exposed-modules:
+      Import
+      Run
+      Types
+      Util
+  other-modules:
+      Paths_omni_cli
+  autogen-modules:
+      Paths_omni_cli
+  hs-source-dirs:
+      src
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  build-depends:
+      base
+    , omni-lib
+    , rio
+  default-language: Haskell2010
+
+executable omni-cli-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_omni_cli
+  autogen-modules:
+      Paths_omni_cli
+  hs-source-dirs:
+      app
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base
+    , omni-cli
+    , omni-lib
+    , optparse-simple
+    , rio
+  default-language: Haskell2010
