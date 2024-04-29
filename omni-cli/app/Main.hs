@@ -7,6 +7,7 @@ import Import
 import Options.Applicative.Simple
 import qualified Paths_omni_cli
 import RIO.Process
+import Omni.Config (OptimizationLevel(..))
 import Run
 
 main :: IO ()

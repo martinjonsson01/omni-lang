@@ -18,10 +18,23 @@ packages:
       size: 426
   original:
     hackage: monadLib-3.10.1@sha256:f965920379fee5e69dba089ac41bfc885598db2659fccfd3fd484a0c2b90282a,644
+- completed:
+    hackage: rock-0.3.1.2@sha256:9df391b2d9e8ef9fb992c86f49b5d77c40a9990ddedfd1b96d89f8967417b14d,3815
+    pantry-tree:
+      sha256: dbd531fa18103274a2d1c6ef91487e2c1a61e9effea974c6d9342a7157168a1f
+      size: 536
+  original:
+    hackage: rock-0.3.1.2@sha256:9df391b2d9e8ef9fb992c86f49b5d77c40a9990ddedfd1b96d89f8967417b14d,3815
+- completed:
+    hackage: dependent-hashmap-0.1.0.1@sha256:6d1c20bd79f32d8daebd3cc741f884cc3d093118e3b876eb957defd4c594a966,1892
+    pantry-tree:
+      sha256: 817b36b81735d96696c5b165357c431e0b396dcf45afb8b4384fbfd4f4499cbb
+      size: 334
+  original:
+    hackage: dependent-hashmap-0.1.0.1@sha256:6d1c20bd79f32d8daebd3cc741f884cc3d093118e3b876eb957defd4c594a966,1892
 snapshots:
 - completed:
     sha256: 9bebedd3de0195aa01fd55de7f6d4446667440297a7315e69cd72c2610af265f
     size: 713338
     url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/22/18.yaml
-  original:
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/22/18.yaml
+  original: lts-22.18

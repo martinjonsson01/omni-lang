@@ -12,13 +12,28 @@ dependencies:
 - base
 - text
 - bytestring
+- directory
+- filepath
+- typed-process
 - mtl
 - containers
+- hashable
+- some
+- dependent-hashmap
+- constraints
+- constraints-extras
+- dependent-sum-template
+- unordered-containers
+- prettyprinter
 - pretty-show
 - pretty
 - llvm-pretty
 - conduit-extra
 - async
+- rock
+- katip
+- microlens
+- microlens-th
 
 default-extensions:
 - ImportQualifiedPost
@@ -58,6 +73,8 @@ default-extensions:
 - TypeFamilies
 - TypeSynonymInstances
 - ViewPatterns
+- BlockArguments
+- DuplicateRecordFields
 
 ghc-options:
 - -Wall

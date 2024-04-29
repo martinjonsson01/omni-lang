@@ -5,11 +5,11 @@ module Types (
   Options (..),
   Input (..),
   Output (..),
-  OptimizationLevel(..),
 ) where
 
 import RIO
 import RIO.Process
+import Omni.Config (OptimizationLevel)
 
 -- | Command line arguments.
 data Options = Options
@@ -24,9 +24,6 @@ data Input = StdIn | InputFile !FilePath
 
 -- | Compiler output modes.
 data Output = StdOut | OutputFile !FilePath
-
--- | Which level of optimization to apply.
-data OptimizationLevel = O0 | O1 | O2 | O3
 
 -- | Application config.
 data App = App

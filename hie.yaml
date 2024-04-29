@@ -1,13 +1,2 @@
 cradle:
-  stack:
-    - path: "omni-cli/src"
-      component: "omni-cli:lib"
-
-    - path: "omni-cli/app/Main.hs"
-      component: "omni-cli:exe:omnic"
-
-    - path: "omni-lib/src"
-      component: "omni-lib:lib"
-
-    - path: "omni-lib/test"
-      component: "omni-lib:test:omni-lib-test"
+  cabal:

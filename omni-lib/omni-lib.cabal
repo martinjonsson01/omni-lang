@@ -1,6 +1,6 @@
 cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.36.0.
+-- This file has been generated from package.yaml by hpack version 0.34.5.
 --
 -- see: https://github.com/sol/hpack
 
@@ -16,10 +16,16 @@ extra-source-files:
 
 library
   exposed-modules:
+      Omni.Compiler
+      Omni.Config
+      Omni.Driver
+      Omni.Error
       Omni.Example
+      Omni.Monad
+      Omni.Name
+      Omni.Query
+      Omni.Rules
   other-modules:
-      Paths_omni_lib
-  autogen-modules:
       Paths_omni_lib
   hs-source-dirs:
       src
@@ -61,18 +67,35 @@ library
       TypeFamilies
       TypeSynonymInstances
       ViewPatterns
+      BlockArguments
+      DuplicateRecordFields
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       async
     , base
     , bytestring
     , conduit-extra
+    , constraints
+    , constraints-extras
     , containers
+    , dependent-hashmap
+    , dependent-sum-template
+    , directory
+    , filepath
+    , hashable
+    , katip
     , llvm-pretty
+    , microlens
+    , microlens-th
     , mtl
     , pretty
     , pretty-show
+    , prettyprinter
+    , rock
+    , some
     , text
+    , typed-process
+    , unordered-containers
   default-language: Haskell2010
 
 test-suite omni-lib-test
@@ -80,8 +103,6 @@ test-suite omni-lib-test
   main-is: Spec.hs
   other-modules:
       Omni.ExampleSpec
-      Paths_omni_lib
-  autogen-modules:
       Paths_omni_lib
   hs-source-dirs:
       test
@@ -123,6 +144,8 @@ test-suite omni-lib-test
       TypeFamilies
       TypeSynonymInstances
       ViewPatterns
+      BlockArguments
+      DuplicateRecordFields
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-tool-depends:
       sydtest-discover:sydtest-discover
@@ -131,12 +154,27 @@ test-suite omni-lib-test
     , base
     , bytestring
     , conduit-extra
+    , constraints
+    , constraints-extras
     , containers
+    , dependent-hashmap
+    , dependent-sum-template
+    , directory
+    , filepath
+    , hashable
+    , katip
     , llvm-pretty
+    , microlens
+    , microlens-th
     , mtl
     , omni-lib
     , pretty
     , pretty-show
+    , prettyprinter
+    , rock
+    , some
     , sydtest
     , text
+    , typed-process
+    , unordered-containers
   default-language: Haskell2010

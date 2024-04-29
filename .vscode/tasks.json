@@ -1,7 +1,5 @@
-
 {
   // Automatically created by phoityne-vscode extension.
-
   "version": "2.0.0",
   "presentation": {
     "reveal": "always",
@@ -9,42 +7,83 @@
   },
   "tasks": [
     {
-      // F7
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
+      "group": "build",
       "label": "haskell build",
       "type": "shell",
-      //"command": "cabal configure && cabal build"
-      "command": "stack build"
+      "command": "stack build",
+      "problemMatcher": []
     },
     {
-      // F6
       "group": "build",
       "type": "shell",
       "label": "haskell clean & build",
-      //"command": "cabal clean && cabal configure && cabal build"
       "command": "stack clean && stack build"
-      //"command": "stack clean ; stack build"  // for powershell
     },
     {
-      // F8
+      "group": "build",
+      "type": "shell",
+      "label": "cabal clean & build",
+      "command": "cabal build all",
+      "dependsOn": [
+        "convert stack to cabal project"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      }
+    },
+    {
+      "group": "build",
+      "type": "shell",
+      "label": "convert stack to cabal project",
+      "command": "stack2cabal",
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      }
+    },
+    {
       "group": {
         "kind": "test",
         "isDefault": true
       },
       "type": "shell",
       "label": "haskell test",
-      //"command": "cabal test"
       "command": "stack test"
     },
     {
-      // F6
       "isBackground": true,
       "type": "shell",
       "label": "haskell watch",
       "command": "stack build --test --no-run-tests --file-watch"
+    },
+    {
+      "label": "rebuild and reload LSP",
+      "command": "${command:haskell.commands.restartServer}",
+      "dependsOn": [
+        "cabal clean & build"
+      ],
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": true
+      }
     }
   ]
 }
