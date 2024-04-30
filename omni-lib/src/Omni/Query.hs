@@ -5,7 +5,6 @@
 
 module Omni.Query (Query (..)) where
 
-import Data.Constraint.Extras.TH
 import Data.GADT.Compare.TH
 import Data.GADT.Show.TH
 import Data.HashSet
@@ -14,8 +13,8 @@ import Data.Some
 import Data.Text
 import Omni.Config (Directory)
 import Omni.Name qualified as Name
-
-type Placeholder = Text
+import Omni.Abs qualified as Parsed
+import qualified Text.LLVM as LLVM
 
 -- | Different things the compiler can be asked to do.
 data Query a where
@@ -23,7 +22,8 @@ data Query a where
   Files :: Query (HashSet FilePath)
   FileText :: FilePath -> Query Text
   ModuleFile :: Name.Module -> Query (Maybe FilePath)
-  ParsedFile :: FilePath -> Query (Maybe Placeholder)
+  ParsedFile :: FilePath -> Query (Maybe Parsed.Module)
+  LLVMModule :: Name.Module -> Query LLVM.Module
 
 deriving instance Eq (Query a)
 
@@ -32,7 +32,6 @@ deriving instance Show (Query a)
 deriveGEq ''Query
 deriveGCompare ''Query
 deriveGShow ''Query
-deriveArgDict ''Query
 
 instance Hashable (Query a) where
   {-# INLINE hashWithSalt #-}
@@ -45,6 +44,7 @@ instance Hashable (Query a) where
     FileText a -> h 2 a
     ModuleFile a -> h 3 a
     ParsedFile a -> h 4 a
+    LLVMModule a -> h 5 a
    where
     -- Hashes the query key with a unique index and its payload.
     {-# INLINE h #-}

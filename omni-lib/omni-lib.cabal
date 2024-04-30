@@ -1,6 +1,6 @@
 cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.34.5.
+-- This file has been generated from package.yaml by hpack version 0.36.0.
 --
 -- see: https://github.com/sol/hpack
 
@@ -26,6 +26,8 @@ library
       Omni.Query
       Omni.Rules
   other-modules:
+      Paths_omni_lib
+  autogen-modules:
       Paths_omni_lib
   hs-source-dirs:
       src
@@ -88,6 +90,7 @@ library
     , microlens
     , microlens-th
     , mtl
+    , omni-parser
     , pretty
     , pretty-show
     , prettyprinter
@@ -103,6 +106,8 @@ test-suite omni-lib-test
   main-is: Spec.hs
   other-modules:
       Omni.ExampleSpec
+      Paths_omni_lib
+  autogen-modules:
       Paths_omni_lib
   hs-source-dirs:
       test
@@ -168,6 +173,7 @@ test-suite omni-lib-test
     , microlens-th
     , mtl
     , omni-lib
+    , omni-parser
     , pretty
     , pretty-show
     , prettyprinter

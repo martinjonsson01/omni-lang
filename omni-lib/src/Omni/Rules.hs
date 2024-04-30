@@ -11,12 +11,15 @@ import Data.Text qualified as Text
 import Data.Text.IO qualified as Text
 import Lens.Micro
 import Omni.Config (Config, configInputDirectories)
-import Omni.Error
+import Omni.Error (Error)
+import Omni.Error qualified as Error
 import Omni.Name qualified as Name
+import Omni.Par qualified as Par
 import Omni.Query
 import Rock
 import System.Directory
 import System.FilePath (joinPath, splitExtension, (<.>), (</>))
+import qualified Text.LLVM as LLVM
 
 -- | Compilation rules, describing how to perform different tasks.
 rules ::
@@ -40,7 +43,7 @@ rules conf (Writer (Writer key)) = case key of
         mbContents <- tryReadFile path
         case mbContents of
           Right contents -> success contents
-          Left e -> failure $ FileLoad path e
+          Left e -> failure $ Error.FileLoad path e
   ModuleFile name@(Name.Module nameText) ->
     nonInput do
       srcDirs <- fetch SourceDirectories
@@ -51,15 +54,19 @@ rules conf (Writer (Writer key)) = case key of
               <.> "omni"
           potentialModulePaths = map moduleFileName srcDirs
           modulePaths = filter (`HashSet.member` files) potentialModulePaths
-      case modulePaths of 
-        [] -> failure $ ModuleNotFound name
+      case modulePaths of
+        [] -> failure $ Error.ModuleNotFound name
         [path] -> success $ Just path
-        path:_ -> return (Just path, [DuplicatedModule name modulePaths])
+        path : _ -> return (Just path, [Error.DuplicatedModule name modulePaths])
   ParsedFile path ->
     nonInput do
       contents <- fetch $ FileText path
-      -- todo: actually parse
-      undefined
+      case Par.pModule (Par.myLexer contents) of
+        Left err -> return (Nothing, [Error.Parse path err])
+        Right parsedMod -> success $ Just parsedMod
+  LLVMModule name -> 
+    nonInput do 
+      success LLVM.emptyModule
  where
   -- \| For tasks whose results may change independently
   -- of their fetched dependencies.

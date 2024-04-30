@@ -1,0 +1,32 @@
+cabal-version: 2.2
+
+-- This file has been generated from package.yaml by hpack version 0.36.0.
+--
+-- see: https://github.com/sol/hpack
+
+name:           omni-parser
+version:        0.1.0
+author:         Martin Jonsson
+maintainer:     martinjonsson01@gmail.com
+copyright:      2024 Martin Jonsson
+license:        BSD-3-Clause
+build-type:     Simple
+
+library
+  exposed-modules:
+      Omni.Abs
+      Omni.Lex
+      Omni.Par
+      Omni.Print
+  other-modules:
+      Paths_omni_parser
+  autogen-modules:
+      Paths_omni_parser
+  hs-source-dirs:
+      src
+  ghc-options: -Wno-all
+  build-depends:
+      array
+    , base
+    , text
+  default-language: Haskell2010

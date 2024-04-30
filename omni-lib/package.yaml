@@ -10,6 +10,7 @@ extra-source-files:
 
 dependencies:
 - base
+- omni-parser
 - text
 - bytestring
 - directory

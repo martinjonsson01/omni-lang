@@ -2,6 +2,7 @@ resolver: lts-22.18
 
 packages:
 - omni-lib
+- omni-parser
 - omni-cli
 
 extra-deps:

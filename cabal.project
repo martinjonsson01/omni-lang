@@ -4,6 +4,7 @@ with-compiler: ghc-9.6.4
 
 packages:
     omni-lib/
+  , omni-parser/
   , omni-cli/
 
 

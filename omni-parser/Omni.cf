@@ -1,0 +1,11 @@
+-- Modules ------------------------------------------------
+
+entrypoints Module ; 
+
+Module. Module ::= [TopDef] ;
+
+-- Top-level definitions ----------------------------------
+
+FnDef. TopDef ::= "teed  d  s   st" ;
+
+separator nonempty TopDef "" ;

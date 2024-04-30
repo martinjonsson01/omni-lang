@@ -6,6 +6,7 @@ module Omni.Config (
   OptimizationLevel (..),
   config,
   configInputDirectories,
+  configBinariesDirectoryLocation,
   configOptLevel,
   configTraceFetch,
 ) where
@@ -18,6 +19,7 @@ type Directory = FilePath
 data Config = Config
   { _configOptLevel :: !OptimizationLevel
   , _configInputDirectories :: ![Directory]
+  , _configBinariesDirectoryLocation :: !Directory
   , _configTraceFetch :: !Bool
   }
 

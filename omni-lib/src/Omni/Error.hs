@@ -8,4 +8,5 @@ data Error
   = FileLoad FilePath IOException
   | ModuleNotFound Name.Module
   | DuplicatedModule Name.Module [FilePath]
+  | Parse FilePath String
   deriving (Show)
