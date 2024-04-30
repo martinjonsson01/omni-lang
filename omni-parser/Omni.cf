@@ -6,6 +6,6 @@ Module. Module ::= "module" Ident [TopDef] ;
 
 -- Top-level definitions ----------------------------------
 
-FnDef. TopDef ::= "teed  d  s   st" ;
+FnDef. TopDef ::= "test" ;
 
 separator nonempty TopDef "" ;
