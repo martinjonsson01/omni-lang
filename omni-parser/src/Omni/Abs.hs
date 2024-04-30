@@ -4,6 +4,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE PatternSynonyms #-}
 
@@ -16,17 +17,22 @@ import qualified Prelude as C
   , Functor, Foldable, Traversable
   , Int, Maybe(..)
   )
+import qualified Data.String
 
+import qualified Data.Text
 import qualified Data.Data    as C (Data, Typeable)
 import qualified GHC.Generics as C (Generic)
 
 type Module = Module' BNFC'Position
-data Module' a = Module a [TopDef' a]
+data Module' a = Module a Ident [TopDef' a]
   deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
 
 type TopDef = TopDef' BNFC'Position
 data TopDef' a = FnDef a
   deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
+newtype Ident = Ident Data.Text.Text
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Data, C.Typeable, C.Generic, Data.String.IsString)
 
 -- | Start position (line, column) of something.
 
@@ -45,7 +51,7 @@ class HasPosition a where
 
 instance HasPosition Module where
   hasPosition = \case
-    Module p _ -> p
+    Module p _ _ -> p
 
 instance HasPosition TopDef where
   hasPosition = \case

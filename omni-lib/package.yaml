@@ -13,9 +13,9 @@ dependencies:
 - omni-parser
 - text
 - bytestring
+- string-conv
 - directory
 - filepath
-- typed-process
 - mtl
 - containers
 - hashable

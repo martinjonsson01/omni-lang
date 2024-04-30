@@ -2,7 +2,7 @@
 
 entrypoints Module ; 
 
-Module. Module ::= [TopDef] ;
+Module. Module ::= "module" Ident [TopDef] ;
 
 -- Top-level definitions ----------------------------------
 

@@ -7,6 +7,7 @@ module Omni.Config (
   config,
   configInputDirectories,
   configBinariesDirectoryLocation,
+  configExecutableOutputPath,
   configOptLevel,
   configTraceFetch,
 ) where
@@ -20,10 +21,18 @@ data Config = Config
   { _configOptLevel :: !OptimizationLevel
   , _configInputDirectories :: ![Directory]
   , _configBinariesDirectoryLocation :: !Directory
+  , _configExecutableOutputPath :: !FilePath
   , _configTraceFetch :: !Bool
   }
 
 -- | Which level of optimization to apply.
 data OptimizationLevel = O0 | O1 | O2 | O3
+
+instance Show OptimizationLevel where
+  show = \case
+    O0 -> "-O0"
+    O1 -> "-O1"
+    O2 -> "-O2"
+    O3 -> "-O3"
 
 makeClassy ''Config

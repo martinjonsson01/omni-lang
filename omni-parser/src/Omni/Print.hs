@@ -21,6 +21,7 @@ import Prelude
   )
 import Data.Char ( Char, isSpace )
 import qualified Omni.Abs
+import qualified Data.Text
 
 -- | The top-level printing method.
 
@@ -137,9 +138,11 @@ instance Print Integer where
 instance Print Double where
   prt _ x = doc (shows x)
 
+instance Print Omni.Abs.Ident where
+  prt _ (Omni.Abs.Ident i) = doc $ showString (Data.Text.unpack i)
 instance Print (Omni.Abs.Module' a) where
   prt i = \case
-    Omni.Abs.Module _ topdefs -> prPrec i 0 (concatD [prt 0 topdefs])
+    Omni.Abs.Module _ id_ topdefs -> prPrec i 0 (concatD [doc (showString "module"), prt 0 id_, prt 0 topdefs])
 
 instance Print (Omni.Abs.TopDef' a) where
   prt i = \case

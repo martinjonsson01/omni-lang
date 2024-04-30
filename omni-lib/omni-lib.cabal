@@ -96,8 +96,8 @@ library
     , prettyprinter
     , rock
     , some
+    , string-conv
     , text
-    , typed-process
     , unordered-containers
   default-language: Haskell2010
 
@@ -179,8 +179,8 @@ test-suite omni-lib-test
     , prettyprinter
     , rock
     , some
+    , string-conv
     , sydtest
     , text
-    , typed-process
     , unordered-containers
   default-language: Haskell2010

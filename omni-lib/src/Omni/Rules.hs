@@ -18,8 +18,10 @@ import Omni.Par qualified as Par
 import Omni.Query
 import Rock
 import System.Directory
-import System.FilePath (joinPath, splitExtension, (<.>), (</>))
-import qualified Text.LLVM as LLVM
+import System.FilePath (addExtension, joinPath, splitExtension, (<.>), (</>))
+import Text.LLVM (Module (..))
+import Text.LLVM qualified as LLVM
+import Text.LLVM.Triple.Parse qualified as LLVMTriple
 
 -- | Compilation rules, describing how to perform different tasks.
 rules ::
@@ -31,9 +33,14 @@ rules conf (Writer (Writer key)) = case key of
   Files ->
     input do
       srcDirs <- fetch SourceDirectories
-      filess <- forM srcDirs \dir -> do
-        allFiles <- liftIO $ getDirectoryContents dir
-        let srcFiles = filter (== ".omni") $ map (snd . splitExtension) allFiles
+      srcDirAbsolutes <- liftIO $ mapM makeAbsolute srcDirs
+      filess <- forM srcDirAbsolutes \dir -> do
+        allFileNames <- liftIO $ getDirectoryContents dir
+        let allFiles = map (dir </>) allFileNames
+            srcFiles =
+              map (uncurry addExtension) $
+                filter ((== ".omni") . snd) $
+                  map splitExtension allFiles
         return srcFiles
       let files = concat filess
       success $ HashSet.fromList files
@@ -64,9 +71,12 @@ rules conf (Writer (Writer key)) = case key of
       case Par.pModule (Par.myLexer contents) of
         Left err -> return (Nothing, [Error.Parse path err])
         Right parsedMod -> success $ Just parsedMod
-  LLVMModule name -> 
-    nonInput do 
-      success LLVM.emptyModule
+  LLVMModule name ->
+    nonInput do
+      success
+        LLVM.emptyModule
+          { modTriple = LLVMTriple.parseTriple "x86_64-unknown-windows-gnu"
+          }
  where
   -- \| For tasks whose results may change independently
   -- of their fetched dependencies.

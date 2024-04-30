@@ -24,16 +24,21 @@ import qualified Data.Text
 %monad { Err } { (>>=) } { return }
 %tokentype {Token}
 %token
-  'd'    { PT _ (TS _ 1) }
-  's'    { PT _ (TS _ 2) }
-  'st'   { PT _ (TS _ 3) }
-  'teed' { PT _ (TS _ 4) }
+  'd'      { PT _ (TS _ 1) }
+  'module' { PT _ (TS _ 2) }
+  's'      { PT _ (TS _ 3) }
+  'st'     { PT _ (TS _ 4) }
+  'teed'   { PT _ (TS _ 5) }
+  L_Ident  { PT _ (TV _)   }
 
 %%
 
+Ident :: { (Omni.Abs.BNFC'Position, Omni.Abs.Ident) }
+Ident  : L_Ident { (uncurry Omni.Abs.BNFC'Position (tokenLineCol $1), Omni.Abs.Ident (tokenText $1)) }
 
 Module :: { (Omni.Abs.BNFC'Position, Omni.Abs.Module) }
-Module : ListTopDef { (fst $1, Omni.Abs.Module (fst $1) (snd $1)) }
+Module
+  : 'module' Ident ListTopDef { (uncurry Omni.Abs.BNFC'Position (tokenLineCol $1), Omni.Abs.Module (uncurry Omni.Abs.BNFC'Position (tokenLineCol $1)) (snd $2) (snd $3)) }
 
 TopDef :: { (Omni.Abs.BNFC'Position, Omni.Abs.TopDef) }
 TopDef
