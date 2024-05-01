@@ -31,14 +31,14 @@ import Rock qualified
 Meant to be called when compiling as a one-shot, otherwise
 parallel + incremental compilation would be more efficient.
 -}
-runTask :: Config -> Task Query a -> IO (a, [Error])
+runTask :: Config -> Task Query a -> IO (a, [Report])
 runTask conf task = do
   startedVar <- newIORef mempty
-  errorsVar <- newIORef (mempty :: DHashMap Query (Const [Error]))
+  errorsVar <- newIORef (mempty :: DHashMap Query (Const [Report]))
   printVar <- newMVar 0
   threadDepsVar <- newIORef mempty
 
-  let writeErrors :: Writer TaskKind Query a -> [Error] -> Task Query ()
+  let writeErrors :: Writer TaskKind Query a -> [Report] -> Task Query ()
       writeErrors (Writer q) errs =
         unless (null errs) $
           liftIO $

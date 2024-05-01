@@ -19,11 +19,14 @@ import qualified Text.LLVM as LLVM
 -- | Different things the compiler can be asked to do.
 data Query a where
   SourceDirectories :: Query [Directory]
+  BinariesDirectory :: Query Directory
   Files :: Query (HashSet FilePath)
   FileText :: FilePath -> Query Text
   ModuleFile :: Name.Module -> Query (Maybe FilePath)
   ParsedFile :: FilePath -> Query (Maybe Parsed.Module)
   LLVMModule :: Name.Module -> Query LLVM.Module
+  LLVMFiles :: Query [FilePath]
+  Executable :: Query (Maybe FilePath)
 
 deriving instance Eq (Query a)
 
@@ -40,11 +43,14 @@ instance Hashable (Query a) where
 
   hash query = case query of
     SourceDirectories -> h 0 ()
-    Files -> h 1 ()
-    FileText a -> h 2 a
-    ModuleFile a -> h 3 a
-    ParsedFile a -> h 4 a
-    LLVMModule a -> h 5 a
+    BinariesDirectory -> h 1 ()
+    Files -> h 2 ()
+    FileText a -> h 3 a
+    ModuleFile a -> h 4 a
+    ParsedFile a -> h 5 a
+    LLVMModule a -> h 6 a
+    LLVMFiles -> h 7 ()
+    Executable -> h 8 ()
    where
     -- Hashes the query key with a unique index and its payload.
     {-# INLINE h #-}
