@@ -91,9 +91,9 @@ library
     , microlens-th
     , mtl
     , omni-parser
-    , pretty
     , pretty-show
     , prettyprinter
+    , prettyprinter-ansi-terminal
     , rock
     , some
     , string-conv
@@ -174,9 +174,9 @@ test-suite omni-lib-test
     , mtl
     , omni-lib
     , omni-parser
-    , pretty
     , pretty-show
     , prettyprinter
+    , prettyprinter-ansi-terminal
     , rock
     , some
     , string-conv

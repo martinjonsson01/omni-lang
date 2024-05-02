@@ -23,7 +23,7 @@ spec =
                   , _configBinariesDirectory = binLoc
                   }
           errors <- compile conf
-          return $ Error.prettyRender errors
+          return $ Error.prettyRenderAnsiText errors
 
 -- | Good golden examples should succeed compilation, bad ones should fail.
 data GoldenVariant = Good | Bad

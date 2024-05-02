@@ -26,8 +26,8 @@ dependencies:
 - dependent-sum-template
 - unordered-containers
 - prettyprinter
+- prettyprinter-ansi-terminal
 - pretty-show
-- pretty
 - llvm-pretty
 - conduit-extra
 - async

@@ -28,7 +28,6 @@ import Text.LLVM (Module (..))
 import Text.LLVM qualified as LLVM
 import Text.LLVM.PP qualified as LLVMPP
 import Text.LLVM.Triple.Parse qualified as LLVMTriple
-import Text.PrettyPrint qualified as PP
 
 -- | Compilation rules, describing how to perform different tasks.
 rules ::
@@ -100,7 +99,7 @@ rules conf (Writer (Writer key)) = case key of
             llvmText =
               LLVMPP.withConfig
                 (LLVMPP.Config 17)
-                (PP.render . LLVMPP.llvmPP)
+                (show . LLVMPP.llvmPP)
                 llvmModule
         liftIO $ writeFile llvmFileName llvmText
         return llvmFileName
