@@ -16,5 +16,5 @@ src\Omni\Par.y src\Omni\Lex.x : Omni.cf
 parser : src\Omni\Par.hs src\Omni\Lex.hs clean
 
 clean : 
-	rm -f src/Omni/Par.info src/Omni/Skel.hs src/Omni/ErrM.hs src/Omni/Test.hs
+	rm -f src/Omni/Skel.hs src/Omni/ErrM.hs src/Omni/Test.hs
 	rm -f src/Omni/*.bak

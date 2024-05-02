@@ -16,16 +16,24 @@ reserved words excluded.
 
 
 ===Literals===
+Integer literals //Integer// are nonempty sequences of digits.
+
+
+
+
+InfixOpIdent literals are recognized by the regular expression
+`````["*+-/<=>?^"]+`````
 
 
 ===Reserved words and symbols===
 The set of reserved words is the set of terminals appearing in the grammar. Those reserved words that consist of non-letter characters are called symbols, and they are treated in a different way from those that are similar to identifiers. The lexer follows rules familiar from languages like Haskell, C, and Java, including longest match and spacing conventions.
 
 The reserved words used in Omni are the following:
-  | ``module`` | ``test`` |  |
+  | ``module`` |  |  |
 
-
-There are no symbols in Omni.
+The symbols used in Omni are the following:
+  | () | : | = | (
+  | ) | , | -> |
 
 ===Comments===
 There are no single-line comments in the grammar.There are no multiple-line comments in the grammar.
@@ -36,10 +44,32 @@ The symbols -> (production),  **|**  (union)
 and **eps** (empty rule) belong to the BNF notation.
 All other symbols are terminals.
 
-  | //Module// | -> | ``module`` //Ident// //[TopDef]//
-  | //TopDef// | -> | ``test``
+  | //Module// | -> | ``module`` //Ident// ``()`` //[TopDef]//
+  | //TopDef// | -> | //Ident// //ParamList// ``:`` //Type// ``=`` //Exp//
   | //[TopDef]// | -> | //TopDef//
   |  |  **|**  | //TopDef// //[TopDef]//
+  | //ParamList// | -> | **eps**
+  |  |  **|**  | ``(`` //[Param]// ``)``
+  | //Param// | -> | //Ident// ``:`` //Type//
+  | //[Param]// | -> | **eps**
+  |  |  **|**  | //Param//
+  |  |  **|**  | //Param// ``,`` //[Param]//
+  | //Type// | -> | ``(`` //[Type]// ``)`` ``->`` //Type//
+  |  |  **|**  | ``()``
+  |  |  **|**  | //Ident//
+  | //[Type]// | -> | **eps**
+  |  |  **|**  | //Type//
+  |  |  **|**  | //Type// ``,`` //[Type]//
+  | //Exp1// | -> | //Ident//
+  |  |  **|**  | //Integer//
+  |  |  **|**  | ``()``
+  |  |  **|**  | ``(`` //Exp// ``)``
+  | //Exp// | -> | //Exp// //InfixOpIdent// //Exp1//
+  |  |  **|**  | //Exp// ``(`` //[Exp]// ``)``
+  |  |  **|**  | //Exp1//
+  | //[Exp]// | -> | **eps**
+  |  |  **|**  | //Exp//
+  |  |  **|**  | //Exp// ``,`` //[Exp]//
 
 
 

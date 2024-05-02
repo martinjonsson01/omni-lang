@@ -27,15 +27,30 @@ $d = [0-9]           -- digit
 $i = [$l $d _ ']     -- identifier character
 $u = [. \n]          -- universal: any character
 
+-- Symbols and non-identifier-like reserved words
+
+@rsyms = \( \) | \: | \= | \( | \) | \, | \- \>
 
 :-
 
 -- Whitespace (skipped)
 $white+ ;
 
+-- Symbols
+@rsyms
+    { tok (eitherResIdent TV) }
+
+-- token InfixOpIdent
+[\* \+ \- \/ \< \= \> \? \^]+
+    { tok (eitherResIdent T_InfixOpIdent) }
+
 -- Keywords and Ident
 $l $i*
     { tok (eitherResIdent TV) }
+
+-- Integer
+$d+
+    { tok TI }
 
 {
 -- | Create a token with position.
@@ -50,6 +65,7 @@ data Tok
   | TV !Data.Text.Text            -- ^ Identifier.
   | TD !Data.Text.Text            -- ^ Float literal.
   | TC !Data.Text.Text            -- ^ Character literal.
+  | T_InfixOpIdent !Data.Text.Text
   deriving (Eq, Show, Ord)
 
 -- | Smart constructor for 'Tok' for the sake of backwards compatibility.
@@ -128,6 +144,7 @@ tokenText t = case t of
   PT _ _ (TD s)   -> s
   PT _ _ (TC s)   -> s
   Err _         -> Data.Text.pack "#error"
+  PT _ _ (T_InfixOpIdent s) -> s
 
 -- | Convert a token to a string.
 prToken :: Token -> String
@@ -153,7 +170,10 @@ eitherResIdent tv s = treeFind resWords
 
 -- | The keywords and symbols of the language organized as binary search tree.
 resWords :: BTree
-resWords = b "test" 2 (b "module" 1 N N) N
+resWords =
+  b "->" 5
+    (b ")" 3 (b "()" 2 (b "(" 1 N N) N) (b "," 4 N N))
+    (b "=" 7 (b ":" 6 N N) (b "module" 8 N N))
   where
   b s n = B bs (TS bs n)
     where

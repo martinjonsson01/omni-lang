@@ -140,15 +140,55 @@ instance Print Double where
 
 instance Print Omni.Abs.Ident where
   prt _ (Omni.Abs.Ident i) = doc $ showString (Data.Text.unpack i)
+instance Print Omni.Abs.InfixOpIdent where
+  prt _ (Omni.Abs.InfixOpIdent i) = doc $ showString (Data.Text.unpack i)
 instance Print (Omni.Abs.Module' a) where
   prt i = \case
-    Omni.Abs.Module _ id_ topdefs -> prPrec i 0 (concatD [doc (showString "module"), prt 0 id_, prt 0 topdefs])
+    Omni.Abs.Module _ id_ topdefs -> prPrec i 0 (concatD [doc (showString "module"), prt 0 id_, doc (showString "()"), prt 0 topdefs])
 
 instance Print (Omni.Abs.TopDef' a) where
   prt i = \case
-    Omni.Abs.FnDef _ -> prPrec i 0 (concatD [doc (showString "test")])
+    Omni.Abs.FnDef _ id_ paramlist type_ exp -> prPrec i 0 (concatD [prt 0 id_, prt 0 paramlist, doc (showString ":"), prt 0 type_, doc (showString "="), prt 0 exp])
 
 instance Print [Omni.Abs.TopDef' a] where
   prt _ [] = concatD []
   prt _ [x] = concatD [prt 0 x]
   prt _ (x:xs) = concatD [prt 0 x, prt 0 xs]
+
+instance Print (Omni.Abs.ParamList' a) where
+  prt i = \case
+    Omni.Abs.NoParams _ -> prPrec i 0 (concatD [])
+    Omni.Abs.SomeParams _ params -> prPrec i 0 (concatD [doc (showString "("), prt 0 params, doc (showString ")")])
+
+instance Print (Omni.Abs.Param' a) where
+  prt i = \case
+    Omni.Abs.Param _ id_ type_ -> prPrec i 0 (concatD [prt 0 id_, doc (showString ":"), prt 0 type_])
+
+instance Print [Omni.Abs.Param' a] where
+  prt _ [] = concatD []
+  prt _ [x] = concatD [prt 0 x]
+  prt _ (x:xs) = concatD [prt 0 x, doc (showString ","), prt 0 xs]
+
+instance Print (Omni.Abs.Type' a) where
+  prt i = \case
+    Omni.Abs.TFn _ types type_ -> prPrec i 0 (concatD [doc (showString "("), prt 0 types, doc (showString ")"), doc (showString "->"), prt 0 type_])
+    Omni.Abs.TUnit _ -> prPrec i 0 (concatD [doc (showString "()")])
+    Omni.Abs.TNamed _ id_ -> prPrec i 0 (concatD [prt 0 id_])
+
+instance Print [Omni.Abs.Type' a] where
+  prt _ [] = concatD []
+  prt _ [x] = concatD [prt 0 x]
+  prt _ (x:xs) = concatD [prt 0 x, doc (showString ","), prt 0 xs]
+
+instance Print (Omni.Abs.Exp' a) where
+  prt i = \case
+    Omni.Abs.EIdent _ id_ -> prPrec i 1 (concatD [prt 0 id_])
+    Omni.Abs.EIntLit _ n -> prPrec i 1 (concatD [prt 0 n])
+    Omni.Abs.EUnit _ -> prPrec i 1 (concatD [doc (showString "()")])
+    Omni.Abs.EInfixOp _ exp1 infixopident exp2 -> prPrec i 0 (concatD [prt 0 exp1, prt 0 infixopident, prt 1 exp2])
+    Omni.Abs.EApplication _ exp exps -> prPrec i 0 (concatD [prt 0 exp, doc (showString "("), prt 0 exps, doc (showString ")")])
+
+instance Print [Omni.Abs.Exp' a] where
+  prt _ [] = concatD []
+  prt _ [x] = concatD [prt 0 x]
+  prt _ (x:xs) = concatD [prt 0 x, doc (showString ","), prt 0 xs]

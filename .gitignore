@@ -51,3 +51,6 @@ cabal.project.local~
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/haskell,visualstudiocode
+
+# No need to commit the parser debug info 
+Par.info

@@ -1,0 +1,11 @@
+module SimpleFunctionDeclaration()
+
+nullary_function: Int = 1
+
+oneline_function(x: Int, y: Int) : Int = x + y
+
+wrapped_function(x: Int, y: Int) : Int =
+  x + y
+
+main : Int =
+  oneline_function(nullary_function, 2)

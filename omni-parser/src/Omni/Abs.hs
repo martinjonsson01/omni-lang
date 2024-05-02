@@ -12,6 +12,7 @@
 
 module Omni.Abs where
 
+import Prelude (Integer)
 import qualified Prelude as C
   ( Eq, Ord, Show, Read
   , Functor, Foldable, Traversable
@@ -29,10 +30,34 @@ data Module' a = Module a Ident [TopDef' a]
   deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
 
 type TopDef = TopDef' BNFC'Position
-data TopDef' a = FnDef a
+data TopDef' a = FnDef a Ident (ParamList' a) (Type' a) (Exp' a)
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
+type ParamList = ParamList' BNFC'Position
+data ParamList' a = NoParams a | SomeParams a [Param' a]
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
+type Param = Param' BNFC'Position
+data Param' a = Param a Ident (Type' a)
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
+type Type = Type' BNFC'Position
+data Type' a = TFn a [Type' a] (Type' a) | TUnit a | TNamed a Ident
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
+type Exp = Exp' BNFC'Position
+data Exp' a
+    = EIdent a Ident
+    | EIntLit a Integer
+    | EUnit a
+    | EInfixOp a (Exp' a) InfixOpIdent (Exp' a)
+    | EApplication a (Exp' a) [Exp' a]
   deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
 
 newtype Ident = Ident Data.Text.Text
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Data, C.Typeable, C.Generic, Data.String.IsString)
+
+newtype InfixOpIdent = InfixOpIdent Data.Text.Text
   deriving (C.Eq, C.Ord, C.Show, C.Read, C.Data, C.Typeable, C.Generic, Data.String.IsString)
 
 -- | Position range ((startLine, startColumn), (endLine, endColumn)) of something.
@@ -70,5 +95,28 @@ instance HasPosition Module where
 
 instance HasPosition TopDef where
   hasPosition = \case
-    FnDef p -> p
+    FnDef p _ _ _ _ -> p
+
+instance HasPosition ParamList where
+  hasPosition = \case
+    NoParams p -> p
+    SomeParams p _ -> p
+
+instance HasPosition Param where
+  hasPosition = \case
+    Param p _ _ -> p
+
+instance HasPosition Type where
+  hasPosition = \case
+    TFn p _ _ -> p
+    TUnit p -> p
+    TNamed p _ -> p
+
+instance HasPosition Exp where
+  hasPosition = \case
+    EIdent p _ -> p
+    EIntLit p _ -> p
+    EUnit p -> p
+    EInfixOp p _ _ _ -> p
+    EApplication p _ _ -> p
 

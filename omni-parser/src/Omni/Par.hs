@@ -38,27 +38,97 @@ happyIn4 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap4 x)
 happyOut4 :: (HappyAbsSyn ) -> HappyWrap4
 happyOut4 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut4 #-}
-newtype HappyWrap5 = HappyWrap5 ((Omni.Abs.BNFC'Position, Omni.Abs.Module))
-happyIn5 :: ((Omni.Abs.BNFC'Position, Omni.Abs.Module)) -> (HappyAbsSyn )
+newtype HappyWrap5 = HappyWrap5 ((Omni.Abs.BNFC'Position, Integer))
+happyIn5 :: ((Omni.Abs.BNFC'Position, Integer)) -> (HappyAbsSyn )
 happyIn5 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap5 x)
 {-# INLINE happyIn5 #-}
 happyOut5 :: (HappyAbsSyn ) -> HappyWrap5
 happyOut5 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut5 #-}
-newtype HappyWrap6 = HappyWrap6 ((Omni.Abs.BNFC'Position, Omni.Abs.TopDef))
-happyIn6 :: ((Omni.Abs.BNFC'Position, Omni.Abs.TopDef)) -> (HappyAbsSyn )
+newtype HappyWrap6 = HappyWrap6 ((Omni.Abs.BNFC'Position, Omni.Abs.InfixOpIdent))
+happyIn6 :: ((Omni.Abs.BNFC'Position, Omni.Abs.InfixOpIdent)) -> (HappyAbsSyn )
 happyIn6 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap6 x)
 {-# INLINE happyIn6 #-}
 happyOut6 :: (HappyAbsSyn ) -> HappyWrap6
 happyOut6 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut6 #-}
-newtype HappyWrap7 = HappyWrap7 ((Omni.Abs.BNFC'Position, [Omni.Abs.TopDef]))
-happyIn7 :: ((Omni.Abs.BNFC'Position, [Omni.Abs.TopDef])) -> (HappyAbsSyn )
+newtype HappyWrap7 = HappyWrap7 ((Omni.Abs.BNFC'Position, Omni.Abs.Module))
+happyIn7 :: ((Omni.Abs.BNFC'Position, Omni.Abs.Module)) -> (HappyAbsSyn )
 happyIn7 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap7 x)
 {-# INLINE happyIn7 #-}
 happyOut7 :: (HappyAbsSyn ) -> HappyWrap7
 happyOut7 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut7 #-}
+newtype HappyWrap8 = HappyWrap8 ((Omni.Abs.BNFC'Position, Omni.Abs.TopDef))
+happyIn8 :: ((Omni.Abs.BNFC'Position, Omni.Abs.TopDef)) -> (HappyAbsSyn )
+happyIn8 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap8 x)
+{-# INLINE happyIn8 #-}
+happyOut8 :: (HappyAbsSyn ) -> HappyWrap8
+happyOut8 x = Happy_GHC_Exts.unsafeCoerce# x
+{-# INLINE happyOut8 #-}
+newtype HappyWrap9 = HappyWrap9 ((Omni.Abs.BNFC'Position, [Omni.Abs.TopDef]))
+happyIn9 :: ((Omni.Abs.BNFC'Position, [Omni.Abs.TopDef])) -> (HappyAbsSyn )
+happyIn9 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap9 x)
+{-# INLINE happyIn9 #-}
+happyOut9 :: (HappyAbsSyn ) -> HappyWrap9
+happyOut9 x = Happy_GHC_Exts.unsafeCoerce# x
+{-# INLINE happyOut9 #-}
+newtype HappyWrap10 = HappyWrap10 ((Omni.Abs.BNFC'Position, Omni.Abs.ParamList))
+happyIn10 :: ((Omni.Abs.BNFC'Position, Omni.Abs.ParamList)) -> (HappyAbsSyn )
+happyIn10 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap10 x)
+{-# INLINE happyIn10 #-}
+happyOut10 :: (HappyAbsSyn ) -> HappyWrap10
+happyOut10 x = Happy_GHC_Exts.unsafeCoerce# x
+{-# INLINE happyOut10 #-}
+newtype HappyWrap11 = HappyWrap11 ((Omni.Abs.BNFC'Position, Omni.Abs.Param))
+happyIn11 :: ((Omni.Abs.BNFC'Position, Omni.Abs.Param)) -> (HappyAbsSyn )
+happyIn11 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap11 x)
+{-# INLINE happyIn11 #-}
+happyOut11 :: (HappyAbsSyn ) -> HappyWrap11
+happyOut11 x = Happy_GHC_Exts.unsafeCoerce# x
+{-# INLINE happyOut11 #-}
+newtype HappyWrap12 = HappyWrap12 ((Omni.Abs.BNFC'Position, [Omni.Abs.Param]))
+happyIn12 :: ((Omni.Abs.BNFC'Position, [Omni.Abs.Param])) -> (HappyAbsSyn )
+happyIn12 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap12 x)
+{-# INLINE happyIn12 #-}
+happyOut12 :: (HappyAbsSyn ) -> HappyWrap12
+happyOut12 x = Happy_GHC_Exts.unsafeCoerce# x
+{-# INLINE happyOut12 #-}
+newtype HappyWrap13 = HappyWrap13 ((Omni.Abs.BNFC'Position, Omni.Abs.Type))
+happyIn13 :: ((Omni.Abs.BNFC'Position, Omni.Abs.Type)) -> (HappyAbsSyn )
+happyIn13 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap13 x)
+{-# INLINE happyIn13 #-}
+happyOut13 :: (HappyAbsSyn ) -> HappyWrap13
+happyOut13 x = Happy_GHC_Exts.unsafeCoerce# x
+{-# INLINE happyOut13 #-}
+newtype HappyWrap14 = HappyWrap14 ((Omni.Abs.BNFC'Position, [Omni.Abs.Type]))
+happyIn14 :: ((Omni.Abs.BNFC'Position, [Omni.Abs.Type])) -> (HappyAbsSyn )
+happyIn14 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap14 x)
+{-# INLINE happyIn14 #-}
+happyOut14 :: (HappyAbsSyn ) -> HappyWrap14
+happyOut14 x = Happy_GHC_Exts.unsafeCoerce# x
+{-# INLINE happyOut14 #-}
+newtype HappyWrap15 = HappyWrap15 ((Omni.Abs.BNFC'Position, Omni.Abs.Exp))
+happyIn15 :: ((Omni.Abs.BNFC'Position, Omni.Abs.Exp)) -> (HappyAbsSyn )
+happyIn15 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap15 x)
+{-# INLINE happyIn15 #-}
+happyOut15 :: (HappyAbsSyn ) -> HappyWrap15
+happyOut15 x = Happy_GHC_Exts.unsafeCoerce# x
+{-# INLINE happyOut15 #-}
+newtype HappyWrap16 = HappyWrap16 ((Omni.Abs.BNFC'Position, Omni.Abs.Exp))
+happyIn16 :: ((Omni.Abs.BNFC'Position, Omni.Abs.Exp)) -> (HappyAbsSyn )
+happyIn16 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap16 x)
+{-# INLINE happyIn16 #-}
+happyOut16 :: (HappyAbsSyn ) -> HappyWrap16
+happyOut16 x = Happy_GHC_Exts.unsafeCoerce# x
+{-# INLINE happyOut16 #-}
+newtype HappyWrap17 = HappyWrap17 ((Omni.Abs.BNFC'Position, [Omni.Abs.Exp]))
+happyIn17 :: ((Omni.Abs.BNFC'Position, [Omni.Abs.Exp])) -> (HappyAbsSyn )
+happyIn17 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap17 x)
+{-# INLINE happyIn17 #-}
+happyOut17 :: (HappyAbsSyn ) -> HappyWrap17
+happyOut17 x = Happy_GHC_Exts.unsafeCoerce# x
+{-# INLINE happyOut17 #-}
 happyInTok :: (Token) -> (HappyAbsSyn )
 happyInTok x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyInTok #-}
@@ -68,49 +138,73 @@ happyOutTok x = Happy_GHC_Exts.unsafeCoerce# x
 
 
 happyExpList :: HappyAddr
-happyExpList = HappyA# "\x80\x00\x10\x00\x00\x00\x20\x80\x00\x04\x00\x00\x00\x00\x00\x00"#
+happyExpList = HappyA# "\x00\x00\x00\x01\x00\x00\x40\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x20\x00\x00\x08\x00\x00\x00\x80\x00\x00\x10\x00\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x20\x00\x00\x00\x20\x00\x00\x80\x00\x00\x00\x04\x00\x00\x40\x00\x00\x00\x06\x02\x00\x00\x00\x00\x00\x00\x02\x00\x00\x03\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x80\x00\x00\x30\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x40\x00\x00\x00\x04\x00\x00\x60\x60\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x08\x00\xc0\xc0\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x0c\x04\x00\x00\x00\x00\x00\x30\x10\x00\x00\x0a\x08\x00\xc0\xc0\x00\x00\x18\x18\x00\x00\x00\x00\x00\x20\x81\x00\x00\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x18\x18\x00\x00\x00\x00\x00\x00\x00"#
 
 {-# NOINLINE happyExpListPerState #-}
 happyExpListPerState st =
     token_strs_expected
-  where token_strs = ["error","%dummy","%start_pModule_internal","Ident","Module","TopDef","ListTopDef","'module'","'test'","L_Ident","%eof"]
-        bit_start = st Prelude.* 11
-        bit_end = (st Prelude.+ 1) Prelude.* 11
+  where token_strs = ["error","%dummy","%start_pModule_internal","Ident","Integer","InfixOpIdent","Module","TopDef","ListTopDef","ParamList","Param","ListParam","Type","ListType","Exp1","Exp","ListExp","'('","'()'","')'","','","'->'","':'","'='","'module'","L_Ident","L_integ","L_InfixOpIdent","%eof"]
+        bit_start = st Prelude.* 29
+        bit_end = (st Prelude.+ 1) Prelude.* 29
         read_bit = readArrayBit happyExpList
         bits = Prelude.map read_bit [bit_start..bit_end Prelude.- 1]
-        bits_indexed = Prelude.zip bits [0..10]
+        bits_indexed = Prelude.zip bits [0..28]
         token_strs_expected = Prelude.concatMap f bits_indexed
         f (Prelude.False, _) = []
         f (Prelude.True, nr) = [token_strs Prelude.!! nr]
 
 happyActOffsets :: HappyAddr
-happyActOffsets = HappyA# "\x04\x00\x03\x00\x00\x00\x05\x00\x07\x00\x06\x00\x06\x00\x00\x00\x00\x00\x00\x00\x00\x00"#
+happyActOffsets = HappyA# "\xfb\xff\xfd\xff\x00\x00\xff\xff\x15\x00\x40\x00\x25\x00\x1f\x00\x31\x00\x00\x00\x00\x00\x3d\x00\x3b\x00\x42\x00\x43\x00\x46\x00\x2e\x00\x00\x00\x44\x00\x2e\x00\x00\x00\x00\x00\x45\x00\x2e\x00\x00\x00\x00\x00\x48\x00\x47\x00\x29\x00\x00\x00\x00\x00\x00\x00\x1e\x00\x29\x00\x00\x00\x00\x00\x4a\x00\x2e\x00\x00\x00\x2e\x00\x17\x00\x29\x00\x29\x00\x00\x00\x18\x00\x4d\x00\x00\x00\x00\x00\x00\x00\x00\x00\x29\x00\x00\x00\x00\x00"#
 
 happyGotoOffsets :: HappyAddr
-happyGotoOffsets = HappyA# "\x0a\x00\x00\x00\x00\x00\x00\x00\x0c\x00\xff\xff\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00"#
+happyGotoOffsets = HappyA# "\x4e\x00\x00\x00\x00\x00\x00\x00\x52\x00\x00\x00\x39\x00\x4f\x00\x41\x00\x00\x00\x00\x00\x00\x00\x34\x00\x00\x00\x00\x00\x00\x00\x28\x00\x00\x00\x00\x00\x1b\x00\x00\x00\x00\x00\x38\x00\x2c\x00\x00\x00\x00\x00\x00\x00\x00\x00\x07\x00\x00\x00\x00\x00\x00\x00\x4b\x00\x09\x00\x00\x00\x00\x00\x00\x00\x1d\x00\x00\x00\x2d\x00\x4b\x00\x16\x00\x01\x00\x00\x00\x4b\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x00\x00\x00\x00\x00"#
 
 happyAdjustOffset :: Happy_GHC_Exts.Int# -> Happy_GHC_Exts.Int#
 happyAdjustOffset off = off
 
 happyDefActions :: HappyAddr
-happyDefActions = HappyA# "\x00\x00\x00\x00\xfe\xff\x00\x00\x00\x00\x00\x00\xfb\xff\xfd\xff\xfc\xff\xfa\xff"#
+happyDefActions = HappyA# "\x00\x00\x00\x00\xfe\xff\x00\x00\x00\x00\x00\x00\x00\x00\xf7\xff\xf9\xff\xfb\xff\xf8\xff\x00\x00\xf4\xff\x00\x00\xf3\xff\x00\x00\x00\x00\xef\xff\x00\x00\xee\xff\xf0\xff\xf6\xff\xf4\xff\x00\x00\xf5\xff\xf2\xff\xed\xff\x00\x00\x00\x00\xeb\xff\xea\xff\xe5\xff\xfa\xff\x00\x00\xe9\xff\xfd\xff\x00\x00\xee\xff\xec\xff\x00\x00\x00\x00\x00\x00\xe4\xff\xfc\xff\xe3\xff\x00\x00\xe7\xff\xe8\xff\xf1\xff\xe6\xff\xe4\xff\xe2\xff"#
 
 happyCheck :: HappyAddr
-happyCheck = HappyA# "\xff\xff\x02\x00\x03\x00\x02\x00\x03\x00\x01\x00\x03\x00\xff\xff\x02\x00\x04\x00\x03\x00\x01\x00\x00\x00\xff\xff\xff\xff\xff\xff\xff\xff"#
+happyCheck = HappyA# "\xff\xff\x00\x00\x01\x00\x08\x00\x00\x00\x01\x00\x09\x00\x00\x00\x01\x00\x00\x00\x01\x00\x0c\x00\x0b\x00\x0c\x00\x0d\x00\x0b\x00\x0c\x00\x0d\x00\x0b\x00\x0c\x00\x0b\x00\x0c\x00\x00\x00\x01\x00\x01\x00\x01\x00\x03\x00\x00\x00\x04\x00\x00\x00\x09\x00\x01\x00\x01\x00\x0b\x00\x0b\x00\x0b\x00\x09\x00\x0a\x00\x09\x00\x0a\x00\x00\x00\x0b\x00\x01\x00\x02\x00\x00\x00\x00\x00\x09\x00\x01\x00\x02\x00\x09\x00\x09\x00\x0a\x00\x00\x00\x09\x00\x09\x00\x09\x00\x00\x00\x00\x00\x09\x00\x07\x00\x08\x00\x04\x00\x05\x00\x07\x00\x08\x00\x00\x00\x02\x00\x06\x00\x09\x00\x04\x00\x05\x00\x04\x00\x06\x00\x03\x00\x03\x00\x07\x00\x04\x00\x02\x00\x09\x00\x05\x00\x03\x00\x03\x00\x00\x00\xff\xff\xff\xff\x06\x00\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff"#
 
 happyTable :: HappyAddr
-happyTable = HappyA# "\x00\x00\x06\x00\x07\x00\x06\x00\x09\x00\x05\x00\x03\x00\x00\x00\x09\x00\xff\xff\x03\x00\x03\x00\x05\x00\x00\x00\x00\x00\x00\x00\x00\x00"#
+happyTable = HappyA# "\x00\x00\x1d\x00\x1e\x00\x05\x00\x1d\x00\x1e\x00\x03\x00\x1d\x00\x1e\x00\x1d\x00\x1e\x00\xff\xff\x1f\x00\x2c\x00\x2d\x00\x1f\x00\x2c\x00\x33\x00\x1f\x00\x20\x00\x1f\x00\x28\x00\x1d\x00\x1e\x00\x2b\x00\x2b\x00\x30\x00\x11\x00\x33\x00\x11\x00\x03\x00\x2b\x00\x0d\x00\x2e\x00\x2c\x00\x2c\x00\x1a\x00\x1b\x00\x1a\x00\x26\x00\x11\x00\x2c\x00\x22\x00\x23\x00\x11\x00\x11\x00\x03\x00\x14\x00\x15\x00\x12\x00\x03\x00\x24\x00\x0d\x00\x18\x00\x30\x00\x03\x00\x0d\x00\x07\x00\x03\x00\x0e\x00\x0f\x00\x08\x00\x09\x00\x0e\x00\x19\x00\x07\x00\x07\x00\x11\x00\x03\x00\x08\x00\x0a\x00\x17\x00\x18\x00\x16\x00\x25\x00\x1d\x00\x26\x00\x29\x00\x03\x00\x28\x00\x32\x00\x03\x00\x05\x00\x00\x00\x00\x00\x0b\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"#
 
-happyReduceArr = Happy_Data_Array.array (1, 5) [
+happyReduceArr = Happy_Data_Array.array (1, 29) [
 	(1 , happyReduce_1),
 	(2 , happyReduce_2),
 	(3 , happyReduce_3),
 	(4 , happyReduce_4),
-	(5 , happyReduce_5)
+	(5 , happyReduce_5),
+	(6 , happyReduce_6),
+	(7 , happyReduce_7),
+	(8 , happyReduce_8),
+	(9 , happyReduce_9),
+	(10 , happyReduce_10),
+	(11 , happyReduce_11),
+	(12 , happyReduce_12),
+	(13 , happyReduce_13),
+	(14 , happyReduce_14),
+	(15 , happyReduce_15),
+	(16 , happyReduce_16),
+	(17 , happyReduce_17),
+	(18 , happyReduce_18),
+	(19 , happyReduce_19),
+	(20 , happyReduce_20),
+	(21 , happyReduce_21),
+	(22 , happyReduce_22),
+	(23 , happyReduce_23),
+	(24 , happyReduce_24),
+	(25 , happyReduce_25),
+	(26 , happyReduce_26),
+	(27 , happyReduce_27),
+	(28 , happyReduce_28),
+	(29 , happyReduce_29)
 	]
 
-happy_n_terms = 5 :: Prelude.Int
-happy_n_nonterms = 4 :: Prelude.Int
+happy_n_terms = 13 :: Prelude.Int
+happy_n_nonterms = 14 :: Prelude.Int
 
 happyReduce_1 = happySpecReduce_1  0# happyReduction_1
 happyReduction_1 happy_x_1
@@ -119,53 +213,269 @@ happyReduction_1 happy_x_1
 		 ((uncurry Omni.Abs.BNFC'Position (tokenSpan happy_var_1), Omni.Abs.Ident (tokenText happy_var_1))
 	)}
 
-happyReduce_2 = happySpecReduce_3  1# happyReduction_2
-happyReduction_2 happy_x_3
-	happy_x_2
-	happy_x_1
+happyReduce_2 = happySpecReduce_1  1# happyReduction_2
+happyReduction_2 happy_x_1
 	 =  case happyOutTok happy_x_1 of { happy_var_1 -> 
-	case happyOut4 happy_x_2 of { (HappyWrap4 happy_var_2) -> 
-	case happyOut7 happy_x_3 of { (HappyWrap7 happy_var_3) -> 
 	happyIn5
-		 ((Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan happy_var_1)) (fst happy_var_3), Omni.Abs.Module (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan happy_var_1)) (fst happy_var_3)) (snd happy_var_2) (snd happy_var_3))
-	)}}}
+		 ((uncurry Omni.Abs.BNFC'Position (tokenSpan happy_var_1), (read (Data.Text.unpack (tokenText happy_var_1))) :: Integer)
+	)}
 
 happyReduce_3 = happySpecReduce_1  2# happyReduction_3
 happyReduction_3 happy_x_1
 	 =  case happyOutTok happy_x_1 of { happy_var_1 -> 
 	happyIn6
-		 ((Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan happy_var_1)) (uncurry Omni.Abs.BNFC'Position (tokenSpan happy_var_1)), Omni.Abs.FnDef (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan happy_var_1)) (uncurry Omni.Abs.BNFC'Position (tokenSpan happy_var_1))))
+		 ((uncurry Omni.Abs.BNFC'Position (tokenSpan happy_var_1), Omni.Abs.InfixOpIdent (tokenText happy_var_1))
 	)}
 
-happyReduce_4 = happySpecReduce_1  3# happyReduction_4
-happyReduction_4 happy_x_1
-	 =  case happyOut6 happy_x_1 of { (HappyWrap6 happy_var_1) -> 
+happyReduce_4 = happyReduce 4# 3# happyReduction_4
+happyReduction_4 (happy_x_4 `HappyStk`
+	happy_x_3 `HappyStk`
+	happy_x_2 `HappyStk`
+	happy_x_1 `HappyStk`
+	happyRest)
+	 = case happyOutTok happy_x_1 of { happy_var_1 -> 
+	case happyOut4 happy_x_2 of { (HappyWrap4 happy_var_2) -> 
+	case happyOut9 happy_x_4 of { (HappyWrap9 happy_var_4) -> 
 	happyIn7
+		 ((Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan happy_var_1)) (fst happy_var_4), Omni.Abs.Module (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan happy_var_1)) (fst happy_var_4)) (snd happy_var_2) (snd happy_var_4))
+	) `HappyStk` happyRest}}}
+
+happyReduce_5 = happyReduce 6# 4# happyReduction_5
+happyReduction_5 (happy_x_6 `HappyStk`
+	happy_x_5 `HappyStk`
+	happy_x_4 `HappyStk`
+	happy_x_3 `HappyStk`
+	happy_x_2 `HappyStk`
+	happy_x_1 `HappyStk`
+	happyRest)
+	 = case happyOut4 happy_x_1 of { (HappyWrap4 happy_var_1) -> 
+	case happyOut10 happy_x_2 of { (HappyWrap10 happy_var_2) -> 
+	case happyOut13 happy_x_4 of { (HappyWrap13 happy_var_4) -> 
+	case happyOut16 happy_x_6 of { (HappyWrap16 happy_var_6) -> 
+	happyIn8
+		 ((Omni.Abs.spanBNFC'Position (fst happy_var_1) (fst happy_var_6), Omni.Abs.FnDef (Omni.Abs.spanBNFC'Position (fst happy_var_1) (fst happy_var_6)) (snd happy_var_1) (snd happy_var_2) (snd happy_var_4) (snd happy_var_6))
+	) `HappyStk` happyRest}}}}
+
+happyReduce_6 = happySpecReduce_1  5# happyReduction_6
+happyReduction_6 happy_x_1
+	 =  case happyOut8 happy_x_1 of { (HappyWrap8 happy_var_1) -> 
+	happyIn9
 		 ((Omni.Abs.spanBNFC'Position (fst happy_var_1) (fst happy_var_1), (:[]) (snd happy_var_1))
 	)}
 
-happyReduce_5 = happySpecReduce_2  3# happyReduction_5
-happyReduction_5 happy_x_2
+happyReduce_7 = happySpecReduce_2  5# happyReduction_7
+happyReduction_7 happy_x_2
 	happy_x_1
-	 =  case happyOut6 happy_x_1 of { (HappyWrap6 happy_var_1) -> 
-	case happyOut7 happy_x_2 of { (HappyWrap7 happy_var_2) -> 
-	happyIn7
+	 =  case happyOut8 happy_x_1 of { (HappyWrap8 happy_var_1) -> 
+	case happyOut9 happy_x_2 of { (HappyWrap9 happy_var_2) -> 
+	happyIn9
 		 ((Omni.Abs.spanBNFC'Position (fst happy_var_1) (fst happy_var_2), (:) (snd happy_var_1) (snd happy_var_2))
 	)}}
 
+happyReduce_8 = happySpecReduce_0  6# happyReduction_8
+happyReduction_8  =  happyIn10
+		 ((Omni.Abs.BNFC'NoPosition, Omni.Abs.NoParams Omni.Abs.BNFC'NoPosition)
+	)
+
+happyReduce_9 = happySpecReduce_3  6# happyReduction_9
+happyReduction_9 happy_x_3
+	happy_x_2
+	happy_x_1
+	 =  case happyOutTok happy_x_1 of { happy_var_1 -> 
+	case happyOut12 happy_x_2 of { (HappyWrap12 happy_var_2) -> 
+	case happyOutTok happy_x_3 of { happy_var_3 -> 
+	happyIn10
+		 ((Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan happy_var_1)) (uncurry Omni.Abs.BNFC'Position (tokenSpan happy_var_3)), Omni.Abs.SomeParams (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan happy_var_1)) (uncurry Omni.Abs.BNFC'Position (tokenSpan happy_var_3))) (snd happy_var_2))
+	)}}}
+
+happyReduce_10 = happySpecReduce_3  7# happyReduction_10
+happyReduction_10 happy_x_3
+	happy_x_2
+	happy_x_1
+	 =  case happyOut4 happy_x_1 of { (HappyWrap4 happy_var_1) -> 
+	case happyOut13 happy_x_3 of { (HappyWrap13 happy_var_3) -> 
+	happyIn11
+		 ((Omni.Abs.spanBNFC'Position (fst happy_var_1) (fst happy_var_3), Omni.Abs.Param (Omni.Abs.spanBNFC'Position (fst happy_var_1) (fst happy_var_3)) (snd happy_var_1) (snd happy_var_3))
+	)}}
+
+happyReduce_11 = happySpecReduce_0  8# happyReduction_11
+happyReduction_11  =  happyIn12
+		 ((Omni.Abs.BNFC'NoPosition, [])
+	)
+
+happyReduce_12 = happySpecReduce_1  8# happyReduction_12
+happyReduction_12 happy_x_1
+	 =  case happyOut11 happy_x_1 of { (HappyWrap11 happy_var_1) -> 
+	happyIn12
+		 ((Omni.Abs.spanBNFC'Position (fst happy_var_1) (fst happy_var_1), (:[]) (snd happy_var_1))
+	)}
+
+happyReduce_13 = happySpecReduce_3  8# happyReduction_13
+happyReduction_13 happy_x_3
+	happy_x_2
+	happy_x_1
+	 =  case happyOut11 happy_x_1 of { (HappyWrap11 happy_var_1) -> 
+	case happyOut12 happy_x_3 of { (HappyWrap12 happy_var_3) -> 
+	happyIn12
+		 ((Omni.Abs.spanBNFC'Position (fst happy_var_1) (fst happy_var_3), (:) (snd happy_var_1) (snd happy_var_3))
+	)}}
+
+happyReduce_14 = happyReduce 5# 9# happyReduction_14
+happyReduction_14 (happy_x_5 `HappyStk`
+	happy_x_4 `HappyStk`
+	happy_x_3 `HappyStk`
+	happy_x_2 `HappyStk`
+	happy_x_1 `HappyStk`
+	happyRest)
+	 = case happyOutTok happy_x_1 of { happy_var_1 -> 
+	case happyOut14 happy_x_2 of { (HappyWrap14 happy_var_2) -> 
+	case happyOut13 happy_x_5 of { (HappyWrap13 happy_var_5) -> 
+	happyIn13
+		 ((Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan happy_var_1)) (fst happy_var_5), Omni.Abs.TFn (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan happy_var_1)) (fst happy_var_5)) (snd happy_var_2) (snd happy_var_5))
+	) `HappyStk` happyRest}}}
+
+happyReduce_15 = happySpecReduce_1  9# happyReduction_15
+happyReduction_15 happy_x_1
+	 =  case happyOutTok happy_x_1 of { happy_var_1 -> 
+	happyIn13
+		 ((Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan happy_var_1)) (uncurry Omni.Abs.BNFC'Position (tokenSpan happy_var_1)), Omni.Abs.TUnit (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan happy_var_1)) (uncurry Omni.Abs.BNFC'Position (tokenSpan happy_var_1))))
+	)}
+
+happyReduce_16 = happySpecReduce_1  9# happyReduction_16
+happyReduction_16 happy_x_1
+	 =  case happyOut4 happy_x_1 of { (HappyWrap4 happy_var_1) -> 
+	happyIn13
+		 ((Omni.Abs.spanBNFC'Position (fst happy_var_1) (fst happy_var_1), Omni.Abs.TNamed (Omni.Abs.spanBNFC'Position (fst happy_var_1) (fst happy_var_1)) (snd happy_var_1))
+	)}
+
+happyReduce_17 = happySpecReduce_0  10# happyReduction_17
+happyReduction_17  =  happyIn14
+		 ((Omni.Abs.BNFC'NoPosition, [])
+	)
+
+happyReduce_18 = happySpecReduce_1  10# happyReduction_18
+happyReduction_18 happy_x_1
+	 =  case happyOut13 happy_x_1 of { (HappyWrap13 happy_var_1) -> 
+	happyIn14
+		 ((Omni.Abs.spanBNFC'Position (fst happy_var_1) (fst happy_var_1), (:[]) (snd happy_var_1))
+	)}
+
+happyReduce_19 = happySpecReduce_3  10# happyReduction_19
+happyReduction_19 happy_x_3
+	happy_x_2
+	happy_x_1
+	 =  case happyOut13 happy_x_1 of { (HappyWrap13 happy_var_1) -> 
+	case happyOut14 happy_x_3 of { (HappyWrap14 happy_var_3) -> 
+	happyIn14
+		 ((Omni.Abs.spanBNFC'Position (fst happy_var_1) (fst happy_var_3), (:) (snd happy_var_1) (snd happy_var_3))
+	)}}
+
+happyReduce_20 = happySpecReduce_1  11# happyReduction_20
+happyReduction_20 happy_x_1
+	 =  case happyOut4 happy_x_1 of { (HappyWrap4 happy_var_1) -> 
+	happyIn15
+		 ((Omni.Abs.spanBNFC'Position (fst happy_var_1) (fst happy_var_1), Omni.Abs.EIdent (Omni.Abs.spanBNFC'Position (fst happy_var_1) (fst happy_var_1)) (snd happy_var_1))
+	)}
+
+happyReduce_21 = happySpecReduce_1  11# happyReduction_21
+happyReduction_21 happy_x_1
+	 =  case happyOut5 happy_x_1 of { (HappyWrap5 happy_var_1) -> 
+	happyIn15
+		 ((Omni.Abs.spanBNFC'Position (fst happy_var_1) (fst happy_var_1), Omni.Abs.EIntLit (Omni.Abs.spanBNFC'Position (fst happy_var_1) (fst happy_var_1)) (snd happy_var_1))
+	)}
+
+happyReduce_22 = happySpecReduce_1  11# happyReduction_22
+happyReduction_22 happy_x_1
+	 =  case happyOutTok happy_x_1 of { happy_var_1 -> 
+	happyIn15
+		 ((Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan happy_var_1)) (uncurry Omni.Abs.BNFC'Position (tokenSpan happy_var_1)), Omni.Abs.EUnit (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan happy_var_1)) (uncurry Omni.Abs.BNFC'Position (tokenSpan happy_var_1))))
+	)}
+
+happyReduce_23 = happySpecReduce_3  11# happyReduction_23
+happyReduction_23 happy_x_3
+	happy_x_2
+	happy_x_1
+	 =  case happyOutTok happy_x_1 of { happy_var_1 -> 
+	case happyOut16 happy_x_2 of { (HappyWrap16 happy_var_2) -> 
+	case happyOutTok happy_x_3 of { happy_var_3 -> 
+	happyIn15
+		 ((Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan happy_var_1)) (uncurry Omni.Abs.BNFC'Position (tokenSpan happy_var_3)), (snd happy_var_2))
+	)}}}
+
+happyReduce_24 = happySpecReduce_3  12# happyReduction_24
+happyReduction_24 happy_x_3
+	happy_x_2
+	happy_x_1
+	 =  case happyOut16 happy_x_1 of { (HappyWrap16 happy_var_1) -> 
+	case happyOut6 happy_x_2 of { (HappyWrap6 happy_var_2) -> 
+	case happyOut15 happy_x_3 of { (HappyWrap15 happy_var_3) -> 
+	happyIn16
+		 ((Omni.Abs.spanBNFC'Position (fst happy_var_1) (fst happy_var_3), Omni.Abs.EInfixOp (Omni.Abs.spanBNFC'Position (fst happy_var_1) (fst happy_var_3)) (snd happy_var_1) (snd happy_var_2) (snd happy_var_3))
+	)}}}
+
+happyReduce_25 = happyReduce 4# 12# happyReduction_25
+happyReduction_25 (happy_x_4 `HappyStk`
+	happy_x_3 `HappyStk`
+	happy_x_2 `HappyStk`
+	happy_x_1 `HappyStk`
+	happyRest)
+	 = case happyOut16 happy_x_1 of { (HappyWrap16 happy_var_1) -> 
+	case happyOut17 happy_x_3 of { (HappyWrap17 happy_var_3) -> 
+	case happyOutTok happy_x_4 of { happy_var_4 -> 
+	happyIn16
+		 ((Omni.Abs.spanBNFC'Position (fst happy_var_1) (uncurry Omni.Abs.BNFC'Position (tokenSpan happy_var_4)), Omni.Abs.EApplication (Omni.Abs.spanBNFC'Position (fst happy_var_1) (uncurry Omni.Abs.BNFC'Position (tokenSpan happy_var_4))) (snd happy_var_1) (snd happy_var_3))
+	) `HappyStk` happyRest}}}
+
+happyReduce_26 = happySpecReduce_1  12# happyReduction_26
+happyReduction_26 happy_x_1
+	 =  case happyOut15 happy_x_1 of { (HappyWrap15 happy_var_1) -> 
+	happyIn16
+		 ((Omni.Abs.spanBNFC'Position (fst happy_var_1) (fst happy_var_1), (snd happy_var_1))
+	)}
+
+happyReduce_27 = happySpecReduce_0  13# happyReduction_27
+happyReduction_27  =  happyIn17
+		 ((Omni.Abs.BNFC'NoPosition, [])
+	)
+
+happyReduce_28 = happySpecReduce_1  13# happyReduction_28
+happyReduction_28 happy_x_1
+	 =  case happyOut16 happy_x_1 of { (HappyWrap16 happy_var_1) -> 
+	happyIn17
+		 ((Omni.Abs.spanBNFC'Position (fst happy_var_1) (fst happy_var_1), (:[]) (snd happy_var_1))
+	)}
+
+happyReduce_29 = happySpecReduce_3  13# happyReduction_29
+happyReduction_29 happy_x_3
+	happy_x_2
+	happy_x_1
+	 =  case happyOut16 happy_x_1 of { (HappyWrap16 happy_var_1) -> 
+	case happyOut17 happy_x_3 of { (HappyWrap17 happy_var_3) -> 
+	happyIn17
+		 ((Omni.Abs.spanBNFC'Position (fst happy_var_1) (fst happy_var_3), (:) (snd happy_var_1) (snd happy_var_3))
+	)}}
+
 happyNewToken action sts stk [] =
-	happyDoAction 4# notHappyAtAll action sts stk []
+	happyDoAction 12# notHappyAtAll action sts stk []
 
 happyNewToken action sts stk (tk:tks) =
 	let cont i = happyDoAction i tk action sts stk tks in
 	case tk of {
 	PT _ _ (TS _ 1) -> cont 1#;
 	PT _ _ (TS _ 2) -> cont 2#;
-	PT _ _ (TV _) -> cont 3#;
+	PT _ _ (TS _ 3) -> cont 3#;
+	PT _ _ (TS _ 4) -> cont 4#;
+	PT _ _ (TS _ 5) -> cont 5#;
+	PT _ _ (TS _ 6) -> cont 6#;
+	PT _ _ (TS _ 7) -> cont 7#;
+	PT _ _ (TS _ 8) -> cont 8#;
+	PT _ _ (TV _) -> cont 9#;
+	PT _ _ (TI _) -> cont 10#;
+	PT _ _ (T_InfixOpIdent _) -> cont 11#;
 	_ -> happyError' ((tk:tks), [])
 	}
 
-happyError_ explist 4# tk tks = happyError' (tks, explist)
+happyError_ explist 12# tk tks = happyError' (tks, explist)
 happyError_ explist _ tk tks = happyError' ((tk:tks), explist)
 
 happyThen :: () => Err a -> (a -> Err b) -> Err b
@@ -178,7 +488,7 @@ happyReturn1 = \a tks -> (return) a
 happyError' :: () => ([(Token)], [Prelude.String]) -> Err a
 happyError' = (\(tokens, _) -> happyError tokens)
 pModule_internal tks = happySomeParser where
- happySomeParser = happyThen (happyParse 0# tks) (\x -> happyReturn (let {(HappyWrap5 x') = happyOut5 x} in x'))
+ happySomeParser = happyThen (happyParse 0# tks) (\x -> happyReturn (let {(HappyWrap7 x') = happyOut7 x} in x'))
 
 happySeq = happyDontSeq
 
