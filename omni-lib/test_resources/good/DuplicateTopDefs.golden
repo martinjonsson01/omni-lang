@@ -1,4 +1,0 @@
-error:
-duplicate identifier 'function' at test_resources\good\DuplicateTopDefs.omni:3:1-3:9
-                                   test_resources\good\DuplicateTopDefs.omni:5:1-5:9
-     

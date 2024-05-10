@@ -88,7 +88,7 @@ rules conf (Writer (Writer key)) = case key of
         LLVM.define LLVM.emptyFunAttrs (LLVM.iT 32) "main" () do
           LLVM.label "entry"
           LLVM.comment "test comment"
-          LLVM.ret (LLVM.iT 32 LLVM.-: (1 :: Int))
+          LLVM.ret (LLVM.iT 32 LLVM.-: (0 :: Int))
   LLVMFiles ->
     nonInput $ first concat <$> runCompileM conf generateLLVMModules
   Executable ->
