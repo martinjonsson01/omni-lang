@@ -1,27 +1,32 @@
--- Modules ------------------------------------------------
 
 entrypoints Module ; 
 
-Module. Module ::= "module" Ident "()" [TopDef] ;
+-- Identifiers --------------------------------------------
+
+Name. Name ::= Ident ;
+
+-- Modules ------------------------------------------------
+
+Module. Module ::= "module" Name "(" ")" [TopDef] ;
 
 -- Top-level definitions ----------------------------------
 
-FnDef. TopDef ::= Ident ParamList ":" Type "=" Exp ;
+FnDef. TopDef ::= Name ParamList ":" Type "=" Exp ;
 
-separator nonempty TopDef "" ;
+separator TopDef "" ;
 
-NoParams.   ParamList ::=  ;
-SomeParams. ParamList ::= "(" [Param] ")" ;
+ParamList. ParamList ::= "(" [Param] ")" ;
 
-Param. Param ::= Ident ":" Type ;
+Param. Param ::= Name ":" Type ;
 
 separator Param "," ;
 
 -- Types --------------------------------------------------
 
 TFn.    Type ::= "(" [Type] ")" "->" Type ;
-TUnit.  Type ::= "()" ;
-TNamed. Type ::= Ident ; 
+TUnit.  Type ::= "(" ")" ;
+TInt.   Type ::= "Int" ;
+TNamed. Type ::= Name ; 
 
 separator Type "," ;
 
@@ -29,9 +34,9 @@ separator Type "," ;
 
 token InfixOpIdent ["+-*/<>=?^"]+ ;
 
-EIdent.       Exp1 ::= Ident ;
+EIdent.       Exp1 ::= Name ;
 EIntLit.      Exp1 ::= Integer ;
-EUnit.        Exp1 ::= "()" ;
+EUnit.        Exp1 ::= "(" ")" ;
 EInfixOp.     Exp  ::= Exp InfixOpIdent Exp1 ;
 EApplication. Exp  ::= Exp "(" [Exp] ")" ;
 

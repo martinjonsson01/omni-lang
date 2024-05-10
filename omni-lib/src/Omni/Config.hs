@@ -3,14 +3,8 @@
 module Omni.Config (
   Directory,
   Config (..),
+  HasConfig(..),
   OptimizationLevel (..),
-  config,
-  configInputDirectories,
-  configInputFiles,
-  configBinariesDirectory,
-  configExecutableOutputPath,
-  configOptLevel,
-  configTraceFetch,
 ) where
 
 import Lens.Micro.TH (makeClassy)

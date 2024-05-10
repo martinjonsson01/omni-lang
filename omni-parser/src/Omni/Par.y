@@ -25,12 +25,12 @@ import qualified Data.Text
 %tokentype {Token}
 %token
   '('            { PT _ _ (TS _ 1)           }
-  '()'           { PT _ _ (TS _ 2)           }
-  ')'            { PT _ _ (TS _ 3)           }
-  ','            { PT _ _ (TS _ 4)           }
-  '->'           { PT _ _ (TS _ 5)           }
-  ':'            { PT _ _ (TS _ 6)           }
-  '='            { PT _ _ (TS _ 7)           }
+  ')'            { PT _ _ (TS _ 2)           }
+  ','            { PT _ _ (TS _ 3)           }
+  '->'           { PT _ _ (TS _ 4)           }
+  ':'            { PT _ _ (TS _ 5)           }
+  '='            { PT _ _ (TS _ 6)           }
+  'Int'          { PT _ _ (TS _ 7)           }
   'module'       { PT _ _ (TS _ 8)           }
   L_Ident        { PT _ _ (TV _)             }
   L_integ        { PT _ _ (TI _)             }
@@ -47,27 +47,30 @@ Integer  : L_integ  { (uncurry Omni.Abs.BNFC'Position (tokenSpan $1), (read (Dat
 InfixOpIdent :: { (Omni.Abs.BNFC'Position, Omni.Abs.InfixOpIdent) }
 InfixOpIdent  : L_InfixOpIdent { (uncurry Omni.Abs.BNFC'Position (tokenSpan $1), Omni.Abs.InfixOpIdent (tokenText $1)) }
 
+Name :: { (Omni.Abs.BNFC'Position, Omni.Abs.Name) }
+Name
+  : Ident { (Omni.Abs.spanBNFC'Position (fst $1) (fst $1), Omni.Abs.Name (Omni.Abs.spanBNFC'Position (fst $1) (fst $1)) (snd $1)) }
+
 Module :: { (Omni.Abs.BNFC'Position, Omni.Abs.Module) }
 Module
-  : 'module' Ident '()' ListTopDef { (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan $1)) (fst $4), Omni.Abs.Module (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan $1)) (fst $4)) (snd $2) (snd $4)) }
+  : 'module' Name '(' ')' ListTopDef { (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan $1)) (fst $5), Omni.Abs.Module (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan $1)) (fst $5)) (snd $2) (snd $5)) }
 
 TopDef :: { (Omni.Abs.BNFC'Position, Omni.Abs.TopDef) }
 TopDef
-  : Ident ParamList ':' Type '=' Exp { (Omni.Abs.spanBNFC'Position (fst $1) (fst $6), Omni.Abs.FnDef (Omni.Abs.spanBNFC'Position (fst $1) (fst $6)) (snd $1) (snd $2) (snd $4) (snd $6)) }
+  : Name ParamList ':' Type '=' Exp { (Omni.Abs.spanBNFC'Position (fst $1) (fst $6), Omni.Abs.FnDef (Omni.Abs.spanBNFC'Position (fst $1) (fst $6)) (snd $1) (snd $2) (snd $4) (snd $6)) }
 
 ListTopDef :: { (Omni.Abs.BNFC'Position, [Omni.Abs.TopDef]) }
 ListTopDef
-  : TopDef { (Omni.Abs.spanBNFC'Position (fst $1) (fst $1), (:[]) (snd $1)) }
+  : {- empty -} { (Omni.Abs.BNFC'NoPosition, []) }
   | TopDef ListTopDef { (Omni.Abs.spanBNFC'Position (fst $1) (fst $2), (:) (snd $1) (snd $2)) }
 
 ParamList :: { (Omni.Abs.BNFC'Position, Omni.Abs.ParamList) }
 ParamList
-  : {- empty -} { (Omni.Abs.BNFC'NoPosition, Omni.Abs.NoParams Omni.Abs.BNFC'NoPosition) }
-  | '(' ListParam ')' { (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan $1)) (uncurry Omni.Abs.BNFC'Position (tokenSpan $3)), Omni.Abs.SomeParams (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan $1)) (uncurry Omni.Abs.BNFC'Position (tokenSpan $3))) (snd $2)) }
+  : '(' ListParam ')' { (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan $1)) (uncurry Omni.Abs.BNFC'Position (tokenSpan $3)), Omni.Abs.ParamList (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan $1)) (uncurry Omni.Abs.BNFC'Position (tokenSpan $3))) (snd $2)) }
 
 Param :: { (Omni.Abs.BNFC'Position, Omni.Abs.Param) }
 Param
-  : Ident ':' Type { (Omni.Abs.spanBNFC'Position (fst $1) (fst $3), Omni.Abs.Param (Omni.Abs.spanBNFC'Position (fst $1) (fst $3)) (snd $1) (snd $3)) }
+  : Name ':' Type { (Omni.Abs.spanBNFC'Position (fst $1) (fst $3), Omni.Abs.Param (Omni.Abs.spanBNFC'Position (fst $1) (fst $3)) (snd $1) (snd $3)) }
 
 ListParam :: { (Omni.Abs.BNFC'Position, [Omni.Abs.Param]) }
 ListParam
@@ -78,8 +81,9 @@ ListParam
 Type :: { (Omni.Abs.BNFC'Position, Omni.Abs.Type) }
 Type
   : '(' ListType ')' '->' Type { (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan $1)) (fst $5), Omni.Abs.TFn (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan $1)) (fst $5)) (snd $2) (snd $5)) }
-  | '()' { (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan $1)) (uncurry Omni.Abs.BNFC'Position (tokenSpan $1)), Omni.Abs.TUnit (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan $1)) (uncurry Omni.Abs.BNFC'Position (tokenSpan $1)))) }
-  | Ident { (Omni.Abs.spanBNFC'Position (fst $1) (fst $1), Omni.Abs.TNamed (Omni.Abs.spanBNFC'Position (fst $1) (fst $1)) (snd $1)) }
+  | '(' ')' { (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan $1)) (uncurry Omni.Abs.BNFC'Position (tokenSpan $2)), Omni.Abs.TUnit (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan $1)) (uncurry Omni.Abs.BNFC'Position (tokenSpan $2)))) }
+  | 'Int' { (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan $1)) (uncurry Omni.Abs.BNFC'Position (tokenSpan $1)), Omni.Abs.TInt (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan $1)) (uncurry Omni.Abs.BNFC'Position (tokenSpan $1)))) }
+  | Name { (Omni.Abs.spanBNFC'Position (fst $1) (fst $1), Omni.Abs.TNamed (Omni.Abs.spanBNFC'Position (fst $1) (fst $1)) (snd $1)) }
 
 ListType :: { (Omni.Abs.BNFC'Position, [Omni.Abs.Type]) }
 ListType
@@ -89,9 +93,9 @@ ListType
 
 Exp1 :: { (Omni.Abs.BNFC'Position, Omni.Abs.Exp) }
 Exp1
-  : Ident { (Omni.Abs.spanBNFC'Position (fst $1) (fst $1), Omni.Abs.EIdent (Omni.Abs.spanBNFC'Position (fst $1) (fst $1)) (snd $1)) }
+  : Name { (Omni.Abs.spanBNFC'Position (fst $1) (fst $1), Omni.Abs.EIdent (Omni.Abs.spanBNFC'Position (fst $1) (fst $1)) (snd $1)) }
   | Integer { (Omni.Abs.spanBNFC'Position (fst $1) (fst $1), Omni.Abs.EIntLit (Omni.Abs.spanBNFC'Position (fst $1) (fst $1)) (snd $1)) }
-  | '()' { (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan $1)) (uncurry Omni.Abs.BNFC'Position (tokenSpan $1)), Omni.Abs.EUnit (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan $1)) (uncurry Omni.Abs.BNFC'Position (tokenSpan $1)))) }
+  | '(' ')' { (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan $1)) (uncurry Omni.Abs.BNFC'Position (tokenSpan $2)), Omni.Abs.EUnit (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan $1)) (uncurry Omni.Abs.BNFC'Position (tokenSpan $2)))) }
   | '(' Exp ')' { (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan $1)) (uncurry Omni.Abs.BNFC'Position (tokenSpan $3)), (snd $2)) }
 
 Exp :: { (Omni.Abs.BNFC'Position, Omni.Abs.Exp) }

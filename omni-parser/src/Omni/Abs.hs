@@ -25,29 +25,35 @@ import qualified Data.Text
 import qualified Data.Data    as C (Data, Typeable)
 import qualified GHC.Generics as C (Generic)
 
+type Name = Name' BNFC'Position
+data Name' a = Name a Ident
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
 type Module = Module' BNFC'Position
-data Module' a = Module a Ident [TopDef' a]
+data Module' a = Module a (Name' a) [TopDef' a]
   deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
 
 type TopDef = TopDef' BNFC'Position
-data TopDef' a = FnDef a Ident (ParamList' a) (Type' a) (Exp' a)
+data TopDef' a
+    = FnDef a (Name' a) (ParamList' a) (Type' a) (Exp' a)
   deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
 
 type ParamList = ParamList' BNFC'Position
-data ParamList' a = NoParams a | SomeParams a [Param' a]
+data ParamList' a = ParamList a [Param' a]
   deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
 
 type Param = Param' BNFC'Position
-data Param' a = Param a Ident (Type' a)
+data Param' a = Param a (Name' a) (Type' a)
   deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
 
 type Type = Type' BNFC'Position
-data Type' a = TFn a [Type' a] (Type' a) | TUnit a | TNamed a Ident
+data Type' a
+    = TFn a [Type' a] (Type' a) | TUnit a | TInt a | TNamed a (Name' a)
   deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
 
 type Exp = Exp' BNFC'Position
 data Exp' a
-    = EIdent a Ident
+    = EIdent a (Name' a)
     | EIntLit a Integer
     | EUnit a
     | EInfixOp a (Exp' a) InfixOpIdent (Exp' a)
@@ -89,6 +95,10 @@ spanBNFC'Position BNFC'NoPosition BNFC'NoPosition = BNFC'NoPosition
 class HasPosition a where
   hasPosition :: a -> BNFC'Position
 
+instance HasPosition Name where
+  hasPosition = \case
+    Name p _ -> p
+
 instance HasPosition Module where
   hasPosition = \case
     Module p _ _ -> p
@@ -99,8 +109,7 @@ instance HasPosition TopDef where
 
 instance HasPosition ParamList where
   hasPosition = \case
-    NoParams p -> p
-    SomeParams p _ -> p
+    ParamList p _ -> p
 
 instance HasPosition Param where
   hasPosition = \case
@@ -110,6 +119,7 @@ instance HasPosition Type where
   hasPosition = \case
     TFn p _ _ -> p
     TUnit p -> p
+    TInt p -> p
     TNamed p _ -> p
 
 instance HasPosition Exp where

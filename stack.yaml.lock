@@ -32,6 +32,34 @@ packages:
       size: 334
   original:
     hackage: dependent-hashmap-0.1.0.1@sha256:6d1c20bd79f32d8daebd3cc741f884cc3d093118e3b876eb957defd4c594a966,1892
+- completed:
+    hackage: todo-0.2.0.3@sha256:87db5ccfc8294a44190398ad760c277cb7a3d666f7be34b407f879eba14eb803,752
+    pantry-tree:
+      sha256: 39a5b9251293f7564c884482764c6bbcfa56c0ee11c076beafcb979d79805911
+      size: 253
+  original:
+    hackage: todo-0.2.0.3@sha256:87db5ccfc8294a44190398ad760c277cb7a3d666f7be34b407f879eba14eb803,752
+- completed:
+    hackage: nanopass-0.0.3.0@sha256:99109fd9cb662fe419f4b97a27cd07737dfe5b8197866201b079723832598466,2007
+    pantry-tree:
+      sha256: c6e3fff9fd97fb0e3937d2a5c509b47b747aae38243a61b15c2b18ba1de02be5
+      size: 1024
+  original:
+    hackage: nanopass-0.0.3.0@sha256:99109fd9cb662fe419f4b97a27cd07737dfe5b8197866201b079723832598466,2007
+- completed:
+    hackage: megaparsec-9.2.2@sha256:c306a135ec25d91d252032c6128f03598a00e87ea12fcf5fc4878fdffc75c768,3219
+    pantry-tree:
+      sha256: db9715d6910e64d3bbfce69895042a66fcdcd64a54805563834bf0821562b74f
+      size: 1518
+  original:
+    hackage: megaparsec-9.2.2@sha256:c306a135ec25d91d252032c6128f03598a00e87ea12fcf5fc4878fdffc75c768,3219
+- completed:
+    hackage: sexpr-parser-0.2.2.0@sha256:0715b189165ff30f4827b5b6a3c9e775b00c43e9e406ba2fe70600c913479288,1675
+    pantry-tree:
+      sha256: 951e2ebb3e9f754fbb506a9a4b0eebc47c93cfca6406fc5692725b748bdaeeb1
+      size: 624
+  original:
+    hackage: sexpr-parser-0.2.2.0@sha256:0715b189165ff30f4827b5b6a3c9e775b00c43e9e406ba2fe70600c913479288,1675
 snapshots:
 - completed:
     sha256: 9bebedd3de0195aa01fd55de7f6d4446667440297a7315e69cd72c2610af265f

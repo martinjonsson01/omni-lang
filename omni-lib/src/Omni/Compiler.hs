@@ -4,7 +4,7 @@ module Omni.Compiler (
 
 import Omni.Config
 import Omni.Driver
-import Omni.Error (HydratedReport, hydrate)
+import Omni.Reporting (HydratedReport, hydrate)
 import Omni.Query qualified as Query
 import Rock (fetch)
 import Prelude hiding (mod)

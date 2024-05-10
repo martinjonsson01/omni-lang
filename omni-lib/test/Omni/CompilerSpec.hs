@@ -3,7 +3,7 @@ module Omni.CompilerSpec (spec) where
 import Control.Monad
 import Omni.Compiler
 import Omni.Config
-import Omni.Error qualified as Error
+import Omni.Reporting qualified as Error
 import System.Directory
 import System.FilePath
 import Test.Syd

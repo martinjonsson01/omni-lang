@@ -2,37 +2,29 @@ module Omni.Rules (rules) where
 
 import Control.Arrow (first)
 import Control.Exception (IOException, catch)
-import Control.Monad
-import Control.Monad.IO.Class
-import Data.Conduit.Process.Typed (ExitCode (..), proc, readProcess)
-import Data.Foldable
 import Data.HashSet qualified as HashSet
-import Data.List qualified as List
-import Data.Maybe
-import Data.String.Conv (toS)
-import Data.Text (Text)
+import Data.Sequence qualified as Seq
 import Data.Text qualified as Text
 import Data.Text.IO qualified as Text
-import Lens.Micro
-import Omni.Abs qualified as Parsed
-import Omni.Config (Config, configBinariesDirectory, configExecutableOutputPath, configInputDirectories, configInputFiles, configOptLevel)
-import Omni.Error (Report)
-import Omni.Error qualified as Error
+import Omni.Codegen.External
+import Omni.Config (Config, configBinariesDirectory, configInputDirectories, configInputFiles)
+import Omni.Imports
 import Omni.Name qualified as Name
 import Omni.Par qualified as Par
 import Omni.Query
+import Omni.Reporting qualified as Reporting
+import Omni.TypeCheck.L00AST qualified as L0
+import Omni.TypeCheck.L00ParseAST (convertParsed)
+import Omni.TypeCheck.L00Rename (renameIdents)
 import Rock
-import System.Directory
-import System.FilePath (addExtension, joinPath, splitExtension, (<.>), (</>))
 import Text.LLVM (Module (..))
 import Text.LLVM qualified as LLVM
-import Text.LLVM.PP qualified as LLVMPP
 import Text.LLVM.Triple.Parse qualified as LLVMTriple
 
 -- | Compilation rules, describing how to perform different tasks.
 rules ::
   Config ->
-  GenRules (Writer [Report] (Writer TaskKind Query)) Query
+  GenRules (Writer Reports (Writer TaskKind Query)) Query
 rules conf (Writer (Writer key)) = case key of
   SourceDirectories ->
     input $ success (conf ^. configInputDirectories)
@@ -61,7 +53,7 @@ rules conf (Writer (Writer key)) = case key of
         mbContents <- tryReadFile path
         case mbContents of
           Right contents -> success contents
-          Left e -> failure $ Error.fileLoad path e
+          Left e -> failure $ Reporting.fileLoad path e
   ModuleFile name@(Name.Module nameText) ->
     nonInput do
       srcDirs <- fetch SourceDirectories
@@ -73,93 +65,55 @@ rules conf (Writer (Writer key)) = case key of
           potentialModulePaths = map moduleFileName srcDirs
           modulePaths = filter (`HashSet.member` files) potentialModulePaths
       case modulePaths of
-        [] -> failure $ Error.moduleNotFound name
+        [] -> failure $ Reporting.moduleNotFound name
         [path] -> success $ Just path
-        path : _ -> return (Just path, [Error.duplicatedModule name modulePaths])
+        path : _ -> return (Just path, Seq.singleton $ Reporting.duplicatedModule name modulePaths)
   ParsedFile path ->
     nonInput do
       contents <- fetch $ FileText path
       case Par.pModule (Par.myLexer contents) of
-        Left err -> return (Nothing, [Error.parse path err])
-        Right parsedMod -> success $ Just parsedMod
-  LLVMModule name ->
+        Left err -> return (Nothing, Seq.singleton $ Reporting.parse path err)
+        Right parsedMod -> runCompileM conf (convertParsed path parsedMod)
+  FileDefinitions path ->
+    nonInput $
+      first (fromMaybe []) <$> runCompileM conf do
+        (L0.Module _ _ defs) <- fetchMaybe $ ParsedFile path
+        return defs
+  RenamedFile path ->
+    nonInput $ runCompileM conf do
+      fetchMaybe (ParsedFile path) >>= renameIdents
+  LLVMModule _ ->
     nonInput do
       success
         LLVM.emptyModule
           { modTriple = LLVMTriple.parseTriple "x86_64-unknown-windows-gnu"
           }
   LLVMFiles ->
-    noError do
-      binDir <- fetch BinariesDirectory
-      filePaths <- toList <$> fetch Files
-      modules <- catMaybes <$> mapM (fetch . ParsedFile) filePaths
-      forM modules \(Parsed.Module _ (Parsed.Ident name) _) -> do
-        llvmModule <- fetch $ LLVMModule (Name.Module name)
-        let llvmFileName = binDir </> toS name <.> "ll"
-            llvmText =
-              LLVMPP.withConfig
-                (LLVMPP.Config 17)
-                (show . LLVMPP.llvmPP)
-                llvmModule
-        liftIO $ writeFile llvmFileName llvmText
-        return llvmFileName
+    nonInput $ first concat <$> runCompileM conf generateLLVMModules
   Executable ->
-    nonInput do
-      binDir <- fetch BinariesDirectory
-      llvmFiles <- fetch LLVMFiles
-      if null llvmFiles
-        then
-          success Nothing
-        else liftIO do
-          let linkedOutputName = binDir </> "program" <.> "ll"
-              optimizationLevel = conf ^. configOptLevel
-              optimizedOutputName = binDir </> "program_opt" <.> "ll"
-              executableName = conf ^. configExecutableOutputPath
-              linkerArgs = ["-S", "-o", linkedOutputName] <> llvmFiles
-          (linkerExitCode, _, linkerErr) <- readProcess $ proc "llvm-link" linkerArgs
-          case linkerExitCode of
-            ExitFailure _ -> failure $ Error.linking linkerArgs linkerErr
-            ExitSuccess -> do
-              (optExitCode, _, optErr) <-
-                readProcess $
-                  proc
-                    "opt"
-                    [show optimizationLevel, "-S", "-o", optimizedOutputName, linkedOutputName]
-              case optExitCode of
-                ExitFailure _ ->
-                  failure $
-                    Error.optimizing
-                      optimizationLevel
-                      linkedOutputName
-                      optErr
-                ExitSuccess -> do
-                  (clangExitCode, _, clangErr) <-
-                    readProcess $ proc "clang" ["-o", executableName, optimizedOutputName]
-                  case clangExitCode of
-                    ExitFailure _ -> failure $ Error.executableGeneration optimizedOutputName clangErr
-                    ExitSuccess -> success (Just executableName)
+    nonInput $ runCompileM conf generateExecutable
  where
   -- \| For tasks whose results may change independently
   -- of their fetched dependencies.
-  input :: (Functor m) => m (a, [Report]) -> m ((a, TaskKind), [Report])
+  input :: (Functor m) => m (a, Reports) -> m ((a, TaskKind), Reports)
   input = fmap (first (,Input))
 
   -- \| For tasks whose results only depend on fetched dependencies,
   -- that also don't need to return errors.
-  noError :: (Functor m) => m a -> m ((a, TaskKind), [Report])
+  noError :: (Functor m) => m a -> m ((a, TaskKind), Reports)
   noError = fmap ((,mempty) . (,NonInput))
 
   -- \| For tasks whose results only depend on fetched dependencies.
-  nonInput :: (Functor m) => m (a, [Report]) -> m ((a, TaskKind), [Report])
+  nonInput :: (Functor m) => m (a, Reports) -> m ((a, TaskKind), Reports)
   nonInput = fmap (first (,NonInput))
 
   -- \| Returns a successful value, without any errors.
-  success :: (Applicative m) => a -> m (a, [Report])
+  success :: (Applicative m) => a -> m (a, Reports)
   success = pure . (,mempty)
 
   -- \| Returns a failure, with an error report.
-  failure :: (Applicative m, Monoid a) => Report -> m (a, [Report])
-  failure = pure . (mempty,) . List.singleton
+  failure :: (Applicative m, Monoid a) => Report -> m (a, Reports)
+  failure = pure . (mempty,) . Seq.singleton
 
   -- \| Catches any exceptions related to file-reading.
   tryReadFile :: FilePath -> IO (Either IOException Text)

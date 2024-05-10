@@ -1,18 +1,14 @@
 module Omni.Driver (runTask) where
 
-import Control.Applicative
+import Omni.Imports
+
 import Control.Concurrent
-import Control.Monad
-import Control.Monad.IO.Class
 import Data.Dependent.HashMap (DHashMap, DSum ((:=>)))
 import Data.Dependent.HashMap qualified as DHashMap
-import Data.Foldable
 import Data.IORef
-import Data.Text (Text)
 import Data.Text qualified as Text
-import Lens.Micro
 import Omni.Config (Config, configTraceFetch)
-import Omni.Error
+
 import Omni.Query
 import Omni.Rules qualified as Rules
 import Rock (
@@ -31,14 +27,14 @@ import Rock qualified
 Meant to be called when compiling as a one-shot, otherwise
 parallel + incremental compilation would be more efficient.
 -}
-runTask :: Config -> Task Query a -> IO (a, [Report])
+runTask :: Config -> Task Query a -> IO (a, Reports)
 runTask conf task = do
   startedVar <- newIORef mempty
-  errorsVar <- newIORef (mempty :: DHashMap Query (Const [Report]))
+  errorsVar <- newIORef (mempty :: DHashMap Query (Const Reports))
   printVar <- newMVar 0
   threadDepsVar <- newIORef mempty
 
-  let writeErrors :: Writer TaskKind Query a -> [Report] -> Task Query ()
+  let writeErrors :: Writer TaskKind Query a -> Reports -> Task Query ()
       writeErrors (Writer q) errs =
         unless (null errs) $
           liftIO $

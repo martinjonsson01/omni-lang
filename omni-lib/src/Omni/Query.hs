@@ -11,10 +11,11 @@ import Data.HashSet
 import Data.Hashable
 import Data.Some
 import Data.Text
+import Omni.Abs qualified as Parsed
 import Omni.Config (Directory)
 import Omni.Name qualified as Name
-import Omni.Abs qualified as Parsed
-import qualified Text.LLVM as LLVM
+import Omni.TypeCheck.L00AST qualified as L0
+import Text.LLVM qualified as LLVM
 
 -- | Different things the compiler can be asked to do.
 data Query a where
@@ -23,7 +24,9 @@ data Query a where
   Files :: Query (HashSet FilePath)
   FileText :: FilePath -> Query Text
   ModuleFile :: Name.Module -> Query (Maybe FilePath)
-  ParsedFile :: FilePath -> Query (Maybe Parsed.Module)
+  ParsedFile :: FilePath -> Query (Maybe (L0.Module Parsed.Ident))
+  FileDefinitions :: FilePath -> Query [L0.TopDef Parsed.Ident]
+  RenamedFile :: FilePath -> Query (Maybe (L0.Module Name.Ident))
   LLVMModule :: Name.Module -> Query LLVM.Module
   LLVMFiles :: Query [FilePath]
   Executable :: Query (Maybe FilePath)
@@ -48,9 +51,11 @@ instance Hashable (Query a) where
     FileText a -> h 3 a
     ModuleFile a -> h 4 a
     ParsedFile a -> h 5 a
-    LLVMModule a -> h 6 a
-    LLVMFiles -> h 7 ()
-    Executable -> h 8 ()
+    FileDefinitions a -> h 6 a
+    RenamedFile a -> h 7 a
+    LLVMModule a -> h 8 a
+    LLVMFiles -> h 9 ()
+    Executable -> h 10 ()
    where
     -- Hashes the query key with a unique index and its payload.
     {-# INLINE h #-}

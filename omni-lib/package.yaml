@@ -17,6 +17,7 @@ dependencies:
 - directory
 - filepath
 - mtl
+- transformers
 - containers
 - hashable
 - some
@@ -35,6 +36,9 @@ dependencies:
 - katip
 - microlens
 - microlens-th
+- nanopass
+- todo
+- MissingH
 
 default-extensions:
 - ImportQualifiedPost
