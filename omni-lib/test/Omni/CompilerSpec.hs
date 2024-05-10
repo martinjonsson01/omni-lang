@@ -3,7 +3,7 @@ module Omni.CompilerSpec (spec) where
 import Control.Monad
 import Omni.Compiler
 import Omni.Config
-import Omni.Reporting qualified as Error
+import Omni.Reporting qualified as Reporting
 import System.Directory
 import System.FilePath
 import Test.Syd
@@ -21,9 +21,10 @@ spec =
                 mempty
                   { _configInputFiles = [srcFile]
                   , _configBinariesDirectory = binLoc
+                  , _configExecutableOutputPath = binLoc </> "program" <.> "exe"
                   }
           errors <- compile conf
-          return $ Error.prettyRenderAnsiText errors
+          return $ Reporting.prettyRenderPlainText errors
 
 -- | Good golden examples should succeed compilation, bad ones should fail.
 data GoldenVariant = Good | Bad

@@ -1,0 +1,7 @@
+module DuplicateTopDefs()
+
+function() : () = ()
+
+function() : () = ()
+
+main() : Int = 0

@@ -83,11 +83,12 @@ rules conf (Writer (Writer key)) = case key of
     nonInput $ runCompileM conf do
       fetchMaybe (ParsedFile path) >>= renameIdents
   LLVMModule _ ->
-    nonInput do
-      success
-        LLVM.emptyModule
-          { modTriple = LLVMTriple.parseTriple "x86_64-unknown-windows-gnu"
-          }
+    nonInput $
+      (success . snd . LLVM.runLLVM) do
+        LLVM.define LLVM.emptyFunAttrs (LLVM.iT 32) "main" () do
+          LLVM.label "entry"
+          LLVM.comment "test comment"
+          LLVM.ret (LLVM.iT 32 LLVM.-: (1 :: Int))
   LLVMFiles ->
     nonInput $ first concat <$> runCompileM conf generateLLVMModules
   Executable ->
