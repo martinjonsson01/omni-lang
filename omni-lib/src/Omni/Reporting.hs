@@ -36,7 +36,6 @@ import Data.Sequence (Seq)
 import Data.Text (Text)
 import Data.Text qualified as Text
 import Data.Text.Encoding qualified as TextEncoding
-import Omni.Abs qualified as Parsed
 import Omni.Config (Directory, OptimizationLevel)
 import Omni.Locations
 import Omni.Name qualified as Name
@@ -57,10 +56,14 @@ data Report = Warn Warning | Err Error
 -- Warnings -----------------------------------------------
 
 -- | Non-critical information about the compilation.
-data Warning = ShadowedIdentifier (L0.Name Parsed.Ident) (L0.Name Name.Ident)
+data Warning = ShadowedIdentifier L0.GenericName L0.GenericName
 
-shadowedIdentifier :: L0.Name Parsed.Ident -> L0.Name Name.Ident -> Report
-shadowedIdentifier shadower = Warn . ShadowedIdentifier shadower
+shadowedIdentifier :: (L0.ToGenericName n1, L0.ToGenericName n2) => n1 -> n2 -> Report
+shadowedIdentifier shadower shadowee =
+  Warn $
+    ShadowedIdentifier
+      (L0.toGeneric shadower)
+      (L0.toGeneric shadowee)
 
 -- Errors -------------------------------------------------
 
@@ -68,8 +71,8 @@ shadowedIdentifier shadower = Warn . ShadowedIdentifier shadower
 data Error
   = -- File errors
     FileLoad FilePath IOException
-  | ModuleNotFound Name.Module
-  | DuplicatedModule Name.Module [FilePath]
+  | ModuleNotFound Name.ModuleName
+  | DuplicatedModule Name.ModuleName [FilePath]
   | -- Parse errors
     Parse FilePath String
   | DuplicateIdentifier Text Locs
@@ -84,10 +87,10 @@ data Error
 fileLoad :: FilePath -> IOException -> Report
 fileLoad path = Err . FileLoad path
 
-moduleNotFound :: Name.Module -> Report
+moduleNotFound :: Name.ModuleName -> Report
 moduleNotFound = Err . ModuleNotFound
 
-duplicatedModule :: Name.Module -> [FilePath] -> Report
+duplicatedModule :: Name.ModuleName -> [FilePath] -> Report
 duplicatedModule name = Err . DuplicatedModule name
 
 parse :: FilePath -> String -> Report
@@ -96,8 +99,8 @@ parse path = Err . Parse path
 duplicateIdentifier :: Text -> Locs -> Report
 duplicateIdentifier name locs = Err $ DuplicateIdentifier name locs
 
-unknownIdentifier :: L0.Name Parsed.Ident -> Report
-unknownIdentifier (L0.Name loc (Parsed.Ident name)) =
+unknownIdentifier :: (L0.ToGenericName a) => a -> Report
+unknownIdentifier (L0.toGeneric -> (L0.GenName loc name)) =
   Err $ UnknownIdentifier name (singleLoc loc)
 
 noLLVMIRModules :: Directory -> Report
@@ -138,7 +141,7 @@ hydrate reports = Hydrated <$> mapM hydrateReport reports
 
   hydrateWarning :: Warning -> Task Query ReportDoc
   hydrateWarning = \case
-    ShadowedIdentifier (L0.Name shadowerLoc shadower) (L0.Name shadoweeLoc _) ->
+    ShadowedIdentifier (L0.GenName shadowerLoc shadower) (L0.GenName shadoweeLoc _) ->
       return $
         warningDoc
           "shadowed identifier: "

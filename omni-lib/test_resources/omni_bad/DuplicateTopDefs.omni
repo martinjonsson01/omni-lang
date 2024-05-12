@@ -1,7 +1,7 @@
 module DuplicateTopDefs()
 
-function() : () = ()
+function() : Unit = ()
 
-function() : () = ()
+function() : Unit = ()
 
 main() : Int = 0

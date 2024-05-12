@@ -29,7 +29,8 @@ library
       Omni.Rules
       Omni.TypeCheck.L00AST
       Omni.TypeCheck.L00ParseAST
-      Omni.TypeCheck.L00Rename
+      Omni.TypeCheck.L01Rename
+      Omni.TypeCheck.L01RenamedAST
       Omni.TypeCheck.TypeChecker
   other-modules:
       Paths_omni_lib

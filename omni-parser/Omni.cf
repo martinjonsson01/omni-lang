@@ -3,42 +3,147 @@ entrypoints Module ;
 
 -- Identifiers --------------------------------------------
 
-Name. Name ::= Ident ;
+token UpperIdent (upper (letter | digit | '_' | '\'')*) ;
+
+token LowerIdent (lower (letter | digit | '_' | '\'')*) ;
+
+TypeName. TypeName ::= UpperIdent ;
+
+ConstructorName. ConstructorName ::= UpperIdent ;
+
+UpperName. Name ::= UpperIdent ;
+LowerName. Name ::= LowerIdent ;
+
+TypeVarName. TypeVarName ::= LowerIdent ;
+
+EffectVarName. EffectVarName ::= LowerIdent ;
 
 -- Modules ------------------------------------------------
 
-Module. Module ::= "module" Name "(" ")" [TopDef] ;
+Module. Module ::= "module" UpperIdent "(" ")" [TopDef] ;
 
 -- Top-level definitions ----------------------------------
 
-FnDef. TopDef ::= Name ParamList ":" Type "=" Exp ;
+TopFnDef.        TopDef ::= FnDef ;
+TopDataDef.      TopDef ::= DataDef ;
+TopInterfaceDef. TopDef ::= InterfaceDef ;
 
 separator TopDef "" ;
 
-ParamList. ParamList ::= "(" [Param] ")" ;
+--------- Functions ---------------------------------------
 
-Param. Param ::= Name ":" Type ;
+FnDef. FnDef ::= FnSig "=" Term ;
 
-separator Param "," ;
+FnSig. FnSig ::= Name "(" [NamedPort] ")" ":" PegType ;
+
+NamedPort. NamedPort ::= Name ":" PortType ;
+
+separator NamedPort "," ;
+
+--------- Data types --------------------------------------
+
+DataDef. DataDef ::= "data" TypeName TypeVarList ConstructorList ;
+
+NoConstructors.   ConstructorList ::= ;
+SomeConstructors. ConstructorList ::= "=" [Constructor] ;
+
+Constructor. Constructor ::= ConstructorName ValueTypeList ;
+
+separator nonempty Constructor "|" ;
+
+--------- Interfaces --------------------------------------
+
+InterfaceDef. InterfaceDef ::= "interface" TypeName TypeVarList CommandSigList ;
+
+NoCommandSigs.   CommandSigList ::= ;
+SomeCommandSigs. CommandSigList ::= "=" [CommandSig] ;
+
+CommandSig. CommandSig ::= Name "(" [NamedParam] ")" ":" ValueType ;
+
+NamedParam. NamedParam ::= Name ":" ValueType ;
+
+separator NamedParam "," ;
+
+separator nonempty CommandSig "|" ;
 
 -- Types --------------------------------------------------
 
-TFn.    Type ::= "(" [Type] ")" "->" Type ;
-TUnit.  Type ::= "(" ")" ;
-TInt.   Type ::= "Int" ;
-TNamed. Type ::= Name ; 
+TValueData.         ValueType ::= TypeName TypeArgList ;
+TValueComputation.  ValueType ::= "{" ComputationType "}";
+TValueParam.        ValueType ::= TypeVarName ;
+TUnit.              ValueType ::= "Unit" ;
+TInt.               ValueType ::= "Int" ;
+separator           ValueType "," ;
 
-separator Type "," ;
+NoValueTypes.       ValueTypeList ::= ;
+SomeValueTypes.     ValueTypeList ::= "(" [ValueType] ")";
 
--- Expressions --------------------------------------------
+TComputation.       ComputationType ::= "(" [PortType] ")" ":" PegType;
+
+TPortNone.          PortType ::= ValueType ;
+TPortSome.          PortType ::= "<" AdjustmentType ">" ValueType ;
+separator           PortType "," ;
+
+TPegNone.           PegType ::= ValueType ;
+TPegSome.           PegType ::= "[" AbilityType "]" ValueType ;
+
+TVar.               TypeVariable ::= TypeVarName ;
+TVarEffect.         TypeVariable ::= "[" EffectVarName "]" ;
+separator nonempty  TypeVariable "," ;
+
+NoTypeVars.         TypeVarList ::=  ;
+SomeTypeVars.       TypeVarList ::= "(" [TypeVariable] ")" ;
+
+TArgValue.          TypeArgument ::= ValueType ;
+TArgAbility.        TypeArgument ::= "[" AbilityType "]" ;
+separator nonempty  TypeArgument "," ;
+
+NoTypeArgs.         TypeArgList ::=  ;
+SomeTypeArgs.       TypeArgList ::= "(" [TypeArgument] ")" ;
+
+TInterface.         InterfaceType ::= TypeName TypeArgList ;
+separator           InterfaceType "," ;
+
+TAbilityInterfaces. AbilityType ::= [InterfaceType] ;
+TAbilityEffectVar.  AbilityType ::= EffectVarName ;
+
+TAdjustment.        AdjustmentType ::= [InterfaceType] ;
+
+-- Terms --------------------------------------------------
 
 token InfixOpIdent ["+-*/<>=?^"]+ ;
 
-EIdent.       Exp1 ::= Name ;
-EIntLit.      Exp1 ::= Integer ;
-EUnit.        Exp1 ::= "(" ")" ;
-EInfixOp.     Exp  ::= Exp InfixOpIdent Exp1 ;
-EApplication. Exp  ::= Exp "(" [Exp] ")" ;
+EIdent.           Term2 ::= Name ;
+EIntLit.          Term2 ::= Integer ;
+EUnit.            Term2 ::= "(" ")" ;
+EApplication.     Term1 ::= Term2 "(" [Term] ")" ;
+EInfixOp.         Term1 ::= Term1 InfixOpIdent Term2 ;
+EConSuspendedCom. Term1 ::= "{" [ComputationTerm] "}" ;
+EConLet.          Term  ::= "let" [Binding] "in" Term ;
+coercions         Term  2 ;
+separator         Term  "," ;
 
-coercions Exp 1 ; 
-separator Exp "," ;
+BindAnnotated.    Binding ::= Name ":" ValueType "=" Term ;
+separator         Binding "," ;
+
+EComputation.     ComputationTerm ::= [ComputationPattern] "->" Term ;
+separator         ComputationTerm "|" ;
+
+CompPatValue.     ComputationPattern ::= ValuePattern ;
+CompPatRequest.   ComputationPattern ::= "<" Name ValuePatternList "->" Name ">" ;
+CompPatCatchAll.  ComputationPattern ::= "<" Name ">" ;
+separator         ComputationPattern "|" ;
+
+NoValuePatterns.   ValuePatternList ::= ;
+SomeValuePatterns. ValuePatternList ::= "(" [ValuePattern] ")" ;
+
+ValPat.            ValuePattern ::= Name ValuePatternList ;
+separator nonempty ValuePattern "," ;
+
+
+
+
+-- Comments -----------------------------------------------
+
+comment "//" ;
+comment "/*" "*/" ;

@@ -138,60 +138,248 @@ instance Print Integer where
 instance Print Double where
   prt _ x = doc (shows x)
 
-instance Print Omni.Abs.Ident where
-  prt _ (Omni.Abs.Ident i) = doc $ showString (Data.Text.unpack i)
+instance Print Omni.Abs.UpperIdent where
+  prt _ (Omni.Abs.UpperIdent i) = doc $ showString (Data.Text.unpack i)
+instance Print Omni.Abs.LowerIdent where
+  prt _ (Omni.Abs.LowerIdent i) = doc $ showString (Data.Text.unpack i)
 instance Print Omni.Abs.InfixOpIdent where
   prt _ (Omni.Abs.InfixOpIdent i) = doc $ showString (Data.Text.unpack i)
+instance Print (Omni.Abs.TypeName' a) where
+  prt i = \case
+    Omni.Abs.TypeName _ upperident -> prPrec i 0 (concatD [prt 0 upperident])
+
+instance Print (Omni.Abs.ConstructorName' a) where
+  prt i = \case
+    Omni.Abs.ConstructorName _ upperident -> prPrec i 0 (concatD [prt 0 upperident])
+
 instance Print (Omni.Abs.Name' a) where
   prt i = \case
-    Omni.Abs.Name _ id_ -> prPrec i 0 (concatD [prt 0 id_])
+    Omni.Abs.UpperName _ upperident -> prPrec i 0 (concatD [prt 0 upperident])
+    Omni.Abs.LowerName _ lowerident -> prPrec i 0 (concatD [prt 0 lowerident])
+
+instance Print (Omni.Abs.TypeVarName' a) where
+  prt i = \case
+    Omni.Abs.TypeVarName _ lowerident -> prPrec i 0 (concatD [prt 0 lowerident])
+
+instance Print (Omni.Abs.EffectVarName' a) where
+  prt i = \case
+    Omni.Abs.EffectVarName _ lowerident -> prPrec i 0 (concatD [prt 0 lowerident])
 
 instance Print (Omni.Abs.Module' a) where
   prt i = \case
-    Omni.Abs.Module _ name topdefs -> prPrec i 0 (concatD [doc (showString "module"), prt 0 name, doc (showString "("), doc (showString ")"), prt 0 topdefs])
+    Omni.Abs.Module _ upperident topdefs -> prPrec i 0 (concatD [doc (showString "module"), prt 0 upperident, doc (showString "("), doc (showString ")"), prt 0 topdefs])
 
 instance Print (Omni.Abs.TopDef' a) where
   prt i = \case
-    Omni.Abs.FnDef _ name paramlist type_ exp -> prPrec i 0 (concatD [prt 0 name, prt 0 paramlist, doc (showString ":"), prt 0 type_, doc (showString "="), prt 0 exp])
+    Omni.Abs.TopFnDef _ fndef -> prPrec i 0 (concatD [prt 0 fndef])
+    Omni.Abs.TopDataDef _ datadef -> prPrec i 0 (concatD [prt 0 datadef])
+    Omni.Abs.TopInterfaceDef _ interfacedef -> prPrec i 0 (concatD [prt 0 interfacedef])
 
 instance Print [Omni.Abs.TopDef' a] where
   prt _ [] = concatD []
   prt _ (x:xs) = concatD [prt 0 x, prt 0 xs]
 
-instance Print (Omni.Abs.ParamList' a) where
+instance Print (Omni.Abs.FnDef' a) where
   prt i = \case
-    Omni.Abs.ParamList _ params -> prPrec i 0 (concatD [doc (showString "("), prt 0 params, doc (showString ")")])
+    Omni.Abs.FnDef _ fnsig term -> prPrec i 0 (concatD [prt 0 fnsig, doc (showString "="), prt 0 term])
 
-instance Print (Omni.Abs.Param' a) where
+instance Print (Omni.Abs.FnSig' a) where
   prt i = \case
-    Omni.Abs.Param _ name type_ -> prPrec i 0 (concatD [prt 0 name, doc (showString ":"), prt 0 type_])
+    Omni.Abs.FnSig _ name namedports pegtype -> prPrec i 0 (concatD [prt 0 name, doc (showString "("), prt 0 namedports, doc (showString ")"), doc (showString ":"), prt 0 pegtype])
 
-instance Print [Omni.Abs.Param' a] where
+instance Print (Omni.Abs.NamedPort' a) where
+  prt i = \case
+    Omni.Abs.NamedPort _ name porttype -> prPrec i 0 (concatD [prt 0 name, doc (showString ":"), prt 0 porttype])
+
+instance Print [Omni.Abs.NamedPort' a] where
   prt _ [] = concatD []
   prt _ [x] = concatD [prt 0 x]
   prt _ (x:xs) = concatD [prt 0 x, doc (showString ","), prt 0 xs]
 
-instance Print (Omni.Abs.Type' a) where
+instance Print (Omni.Abs.DataDef' a) where
   prt i = \case
-    Omni.Abs.TFn _ types type_ -> prPrec i 0 (concatD [doc (showString "("), prt 0 types, doc (showString ")"), doc (showString "->"), prt 0 type_])
-    Omni.Abs.TUnit _ -> prPrec i 0 (concatD [doc (showString "("), doc (showString ")")])
+    Omni.Abs.DataDef _ typename typevarlist constructorlist -> prPrec i 0 (concatD [doc (showString "data"), prt 0 typename, prt 0 typevarlist, prt 0 constructorlist])
+
+instance Print (Omni.Abs.ConstructorList' a) where
+  prt i = \case
+    Omni.Abs.NoConstructors _ -> prPrec i 0 (concatD [])
+    Omni.Abs.SomeConstructors _ constructors -> prPrec i 0 (concatD [doc (showString "="), prt 0 constructors])
+
+instance Print (Omni.Abs.Constructor' a) where
+  prt i = \case
+    Omni.Abs.Constructor _ constructorname valuetypelist -> prPrec i 0 (concatD [prt 0 constructorname, prt 0 valuetypelist])
+
+instance Print [Omni.Abs.Constructor' a] where
+  prt _ [] = concatD []
+  prt _ [x] = concatD [prt 0 x]
+  prt _ (x:xs) = concatD [prt 0 x, doc (showString "|"), prt 0 xs]
+
+instance Print (Omni.Abs.InterfaceDef' a) where
+  prt i = \case
+    Omni.Abs.InterfaceDef _ typename typevarlist commandsiglist -> prPrec i 0 (concatD [doc (showString "interface"), prt 0 typename, prt 0 typevarlist, prt 0 commandsiglist])
+
+instance Print (Omni.Abs.CommandSigList' a) where
+  prt i = \case
+    Omni.Abs.NoCommandSigs _ -> prPrec i 0 (concatD [])
+    Omni.Abs.SomeCommandSigs _ commandsigs -> prPrec i 0 (concatD [doc (showString "="), prt 0 commandsigs])
+
+instance Print (Omni.Abs.CommandSig' a) where
+  prt i = \case
+    Omni.Abs.CommandSig _ name namedparams valuetype -> prPrec i 0 (concatD [prt 0 name, doc (showString "("), prt 0 namedparams, doc (showString ")"), doc (showString ":"), prt 0 valuetype])
+
+instance Print (Omni.Abs.NamedParam' a) where
+  prt i = \case
+    Omni.Abs.NamedParam _ name valuetype -> prPrec i 0 (concatD [prt 0 name, doc (showString ":"), prt 0 valuetype])
+
+instance Print [Omni.Abs.NamedParam' a] where
+  prt _ [] = concatD []
+  prt _ [x] = concatD [prt 0 x]
+  prt _ (x:xs) = concatD [prt 0 x, doc (showString ","), prt 0 xs]
+
+instance Print [Omni.Abs.CommandSig' a] where
+  prt _ [] = concatD []
+  prt _ [x] = concatD [prt 0 x]
+  prt _ (x:xs) = concatD [prt 0 x, doc (showString "|"), prt 0 xs]
+
+instance Print (Omni.Abs.ValueType' a) where
+  prt i = \case
+    Omni.Abs.TValueData _ typename typearglist -> prPrec i 0 (concatD [prt 0 typename, prt 0 typearglist])
+    Omni.Abs.TValueComputation _ computationtype -> prPrec i 0 (concatD [doc (showString "{"), prt 0 computationtype, doc (showString "}")])
+    Omni.Abs.TValueParam _ typevarname -> prPrec i 0 (concatD [prt 0 typevarname])
+    Omni.Abs.TUnit _ -> prPrec i 0 (concatD [doc (showString "Unit")])
     Omni.Abs.TInt _ -> prPrec i 0 (concatD [doc (showString "Int")])
-    Omni.Abs.TNamed _ name -> prPrec i 0 (concatD [prt 0 name])
 
-instance Print [Omni.Abs.Type' a] where
+instance Print [Omni.Abs.ValueType' a] where
   prt _ [] = concatD []
   prt _ [x] = concatD [prt 0 x]
   prt _ (x:xs) = concatD [prt 0 x, doc (showString ","), prt 0 xs]
 
-instance Print (Omni.Abs.Exp' a) where
+instance Print (Omni.Abs.ValueTypeList' a) where
   prt i = \case
-    Omni.Abs.EIdent _ name -> prPrec i 1 (concatD [prt 0 name])
-    Omni.Abs.EIntLit _ n -> prPrec i 1 (concatD [prt 0 n])
-    Omni.Abs.EUnit _ -> prPrec i 1 (concatD [doc (showString "("), doc (showString ")")])
-    Omni.Abs.EInfixOp _ exp1 infixopident exp2 -> prPrec i 0 (concatD [prt 0 exp1, prt 0 infixopident, prt 1 exp2])
-    Omni.Abs.EApplication _ exp exps -> prPrec i 0 (concatD [prt 0 exp, doc (showString "("), prt 0 exps, doc (showString ")")])
+    Omni.Abs.NoValueTypes _ -> prPrec i 0 (concatD [])
+    Omni.Abs.SomeValueTypes _ valuetypes -> prPrec i 0 (concatD [doc (showString "("), prt 0 valuetypes, doc (showString ")")])
 
-instance Print [Omni.Abs.Exp' a] where
+instance Print (Omni.Abs.ComputationType' a) where
+  prt i = \case
+    Omni.Abs.TComputation _ porttypes pegtype -> prPrec i 0 (concatD [doc (showString "("), prt 0 porttypes, doc (showString ")"), doc (showString ":"), prt 0 pegtype])
+
+instance Print (Omni.Abs.PortType' a) where
+  prt i = \case
+    Omni.Abs.TPortNone _ valuetype -> prPrec i 0 (concatD [prt 0 valuetype])
+    Omni.Abs.TPortSome _ adjustmenttype valuetype -> prPrec i 0 (concatD [doc (showString "<"), prt 0 adjustmenttype, doc (showString ">"), prt 0 valuetype])
+
+instance Print [Omni.Abs.PortType' a] where
+  prt _ [] = concatD []
+  prt _ [x] = concatD [prt 0 x]
+  prt _ (x:xs) = concatD [prt 0 x, doc (showString ","), prt 0 xs]
+
+instance Print (Omni.Abs.PegType' a) where
+  prt i = \case
+    Omni.Abs.TPegNone _ valuetype -> prPrec i 0 (concatD [prt 0 valuetype])
+    Omni.Abs.TPegSome _ abilitytype valuetype -> prPrec i 0 (concatD [doc (showString "["), prt 0 abilitytype, doc (showString "]"), prt 0 valuetype])
+
+instance Print (Omni.Abs.TypeVariable' a) where
+  prt i = \case
+    Omni.Abs.TVar _ typevarname -> prPrec i 0 (concatD [prt 0 typevarname])
+    Omni.Abs.TVarEffect _ effectvarname -> prPrec i 0 (concatD [doc (showString "["), prt 0 effectvarname, doc (showString "]")])
+
+instance Print [Omni.Abs.TypeVariable' a] where
+  prt _ [] = concatD []
+  prt _ [x] = concatD [prt 0 x]
+  prt _ (x:xs) = concatD [prt 0 x, doc (showString ","), prt 0 xs]
+
+instance Print (Omni.Abs.TypeVarList' a) where
+  prt i = \case
+    Omni.Abs.NoTypeVars _ -> prPrec i 0 (concatD [])
+    Omni.Abs.SomeTypeVars _ typevariables -> prPrec i 0 (concatD [doc (showString "("), prt 0 typevariables, doc (showString ")")])
+
+instance Print (Omni.Abs.TypeArgument' a) where
+  prt i = \case
+    Omni.Abs.TArgValue _ valuetype -> prPrec i 0 (concatD [prt 0 valuetype])
+    Omni.Abs.TArgAbility _ abilitytype -> prPrec i 0 (concatD [doc (showString "["), prt 0 abilitytype, doc (showString "]")])
+
+instance Print [Omni.Abs.TypeArgument' a] where
+  prt _ [] = concatD []
+  prt _ [x] = concatD [prt 0 x]
+  prt _ (x:xs) = concatD [prt 0 x, doc (showString ","), prt 0 xs]
+
+instance Print (Omni.Abs.TypeArgList' a) where
+  prt i = \case
+    Omni.Abs.NoTypeArgs _ -> prPrec i 0 (concatD [])
+    Omni.Abs.SomeTypeArgs _ typearguments -> prPrec i 0 (concatD [doc (showString "("), prt 0 typearguments, doc (showString ")")])
+
+instance Print (Omni.Abs.InterfaceType' a) where
+  prt i = \case
+    Omni.Abs.TInterface _ typename typearglist -> prPrec i 0 (concatD [prt 0 typename, prt 0 typearglist])
+
+instance Print [Omni.Abs.InterfaceType' a] where
+  prt _ [] = concatD []
+  prt _ [x] = concatD [prt 0 x]
+  prt _ (x:xs) = concatD [prt 0 x, doc (showString ","), prt 0 xs]
+
+instance Print (Omni.Abs.AbilityType' a) where
+  prt i = \case
+    Omni.Abs.TAbilityInterfaces _ interfacetypes -> prPrec i 0 (concatD [prt 0 interfacetypes])
+    Omni.Abs.TAbilityEffectVar _ effectvarname -> prPrec i 0 (concatD [prt 0 effectvarname])
+
+instance Print (Omni.Abs.AdjustmentType' a) where
+  prt i = \case
+    Omni.Abs.TAdjustment _ interfacetypes -> prPrec i 0 (concatD [prt 0 interfacetypes])
+
+instance Print (Omni.Abs.Term' a) where
+  prt i = \case
+    Omni.Abs.EIdent _ name -> prPrec i 2 (concatD [prt 0 name])
+    Omni.Abs.EIntLit _ n -> prPrec i 2 (concatD [prt 0 n])
+    Omni.Abs.EUnit _ -> prPrec i 2 (concatD [doc (showString "("), doc (showString ")")])
+    Omni.Abs.EApplication _ term terms -> prPrec i 1 (concatD [prt 2 term, doc (showString "("), prt 0 terms, doc (showString ")")])
+    Omni.Abs.EInfixOp _ term1 infixopident term2 -> prPrec i 1 (concatD [prt 1 term1, prt 0 infixopident, prt 2 term2])
+    Omni.Abs.EConSuspendedCom _ computationterms -> prPrec i 1 (concatD [doc (showString "{"), prt 0 computationterms, doc (showString "}")])
+    Omni.Abs.EConLet _ bindings term -> prPrec i 0 (concatD [doc (showString "let"), prt 0 bindings, doc (showString "in"), prt 0 term])
+
+instance Print [Omni.Abs.Term' a] where
+  prt _ [] = concatD []
+  prt _ [x] = concatD [prt 0 x]
+  prt _ (x:xs) = concatD [prt 0 x, doc (showString ","), prt 0 xs]
+
+instance Print (Omni.Abs.Binding' a) where
+  prt i = \case
+    Omni.Abs.BindAnnotated _ name valuetype term -> prPrec i 0 (concatD [prt 0 name, doc (showString ":"), prt 0 valuetype, doc (showString "="), prt 0 term])
+
+instance Print [Omni.Abs.Binding' a] where
+  prt _ [] = concatD []
+  prt _ [x] = concatD [prt 0 x]
+  prt _ (x:xs) = concatD [prt 0 x, doc (showString ","), prt 0 xs]
+
+instance Print (Omni.Abs.ComputationTerm' a) where
+  prt i = \case
+    Omni.Abs.EComputation _ computationpatterns term -> prPrec i 0 (concatD [prt 0 computationpatterns, doc (showString "->"), prt 0 term])
+
+instance Print [Omni.Abs.ComputationTerm' a] where
+  prt _ [] = concatD []
+  prt _ [x] = concatD [prt 0 x]
+  prt _ (x:xs) = concatD [prt 0 x, doc (showString "|"), prt 0 xs]
+
+instance Print (Omni.Abs.ComputationPattern' a) where
+  prt i = \case
+    Omni.Abs.CompPatValue _ valuepattern -> prPrec i 0 (concatD [prt 0 valuepattern])
+    Omni.Abs.CompPatRequest _ name1 valuepatternlist name2 -> prPrec i 0 (concatD [doc (showString "<"), prt 0 name1, prt 0 valuepatternlist, doc (showString "->"), prt 0 name2, doc (showString ">")])
+    Omni.Abs.CompPatCatchAll _ name -> prPrec i 0 (concatD [doc (showString "<"), prt 0 name, doc (showString ">")])
+
+instance Print [Omni.Abs.ComputationPattern' a] where
+  prt _ [] = concatD []
+  prt _ [x] = concatD [prt 0 x]
+  prt _ (x:xs) = concatD [prt 0 x, doc (showString "|"), prt 0 xs]
+
+instance Print (Omni.Abs.ValuePatternList' a) where
+  prt i = \case
+    Omni.Abs.NoValuePatterns _ -> prPrec i 0 (concatD [])
+    Omni.Abs.SomeValuePatterns _ valuepatterns -> prPrec i 0 (concatD [doc (showString "("), prt 0 valuepatterns, doc (showString ")")])
+
+instance Print (Omni.Abs.ValuePattern' a) where
+  prt i = \case
+    Omni.Abs.ValPat _ name valuepatternlist -> prPrec i 0 (concatD [prt 0 name, prt 0 valuepatternlist])
+
+instance Print [Omni.Abs.ValuePattern' a] where
   prt _ [] = concatD []
   prt _ [x] = concatD [prt 0 x]
   prt _ (x:xs) = concatD [prt 0 x, doc (showString ","), prt 0 xs]

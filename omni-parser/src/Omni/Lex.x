@@ -29,9 +29,15 @@ $u = [. \n]          -- universal: any character
 
 -- Symbols and non-identifier-like reserved words
 
-@rsyms = \( | \) | \: | \= | \, | \- \>
+@rsyms = \( | \) | \= | \: | \, | \| | \{ | \} | \< | \> | \[ | \] | \- \>
 
 :-
+
+-- Line comment "//"
+"//" [.]* ;
+
+-- Block comment "/*" "*/"
+\/ \* [$u # \*]* \* ([$u # [\* \/]] [$u # \*]* \* | \*)* \/ ;
 
 -- Whitespace (skipped)
 $white+ ;
@@ -39,6 +45,14 @@ $white+ ;
 -- Symbols
 @rsyms
     { tok (eitherResIdent TV) }
+
+-- token UpperIdent
+$c ([\' \_]| ($d | $l)) *
+    { tok (eitherResIdent T_UpperIdent) }
+
+-- token LowerIdent
+$s ([\' \_]| ($d | $l)) *
+    { tok (eitherResIdent T_LowerIdent) }
 
 -- token InfixOpIdent
 [\* \+ \- \/ \< \= \> \? \^]+
@@ -65,6 +79,8 @@ data Tok
   | TV !Data.Text.Text            -- ^ Identifier.
   | TD !Data.Text.Text            -- ^ Float literal.
   | TC !Data.Text.Text            -- ^ Character literal.
+  | T_UpperIdent !Data.Text.Text
+  | T_LowerIdent !Data.Text.Text
   | T_InfixOpIdent !Data.Text.Text
   deriving (Eq, Show, Ord)
 
@@ -144,6 +160,8 @@ tokenText t = case t of
   PT _ _ (TD s)   -> s
   PT _ _ (TC s)   -> s
   Err _         -> Data.Text.pack "#error"
+  PT _ _ (T_UpperIdent s) -> s
+  PT _ _ (T_LowerIdent s) -> s
   PT _ _ (T_InfixOpIdent s) -> s
 
 -- | Convert a token to a string.
@@ -171,9 +189,13 @@ eitherResIdent tv s = treeFind resWords
 -- | The keywords and symbols of the language organized as binary search tree.
 resWords :: BTree
 resWords =
-  b ":" 5
-    (b "," 3 (b ")" 2 (b "(" 1 N N) N) (b "->" 4 N N))
-    (b "Int" 7 (b "=" 6 N N) (b "module" 8 N N))
+  b "[" 11
+    (b "<" 6
+       (b "," 3 (b ")" 2 (b "(" 1 N N) N) (b ":" 5 (b "->" 4 N N) N))
+       (b "Int" 9 (b ">" 8 (b "=" 7 N N) N) (b "Unit" 10 N N)))
+    (b "let" 16
+       (b "in" 14 (b "data" 13 (b "]" 12 N N) N) (b "interface" 15 N N))
+       (b "|" 19 (b "{" 18 (b "module" 17 N N) N) (b "}" 20 N N)))
   where
   b s n = B bs (TS bs n)
     where

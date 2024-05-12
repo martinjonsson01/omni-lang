@@ -1,5 +1,5 @@
 module DuplicateParams()
 
-function(x: Int, x: Int) : () = ()
+function(x: Int, x: Int) : Unit = ()
 
 main() : Int = 0

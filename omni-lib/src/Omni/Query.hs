@@ -11,10 +11,10 @@ import Data.HashSet
 import Data.Hashable
 import Data.Some
 import Data.Text
-import Omni.Abs qualified as Parsed
 import Omni.Config (Directory)
 import Omni.Name qualified as Name
 import Omni.TypeCheck.L00AST qualified as L0
+import Omni.TypeCheck.L01RenamedAST qualified as L1
 import Text.LLVM qualified as LLVM
 
 -- | Different things the compiler can be asked to do.
@@ -23,11 +23,11 @@ data Query a where
   BinariesDirectory :: Query Directory
   Files :: Query (HashSet FilePath)
   FileText :: FilePath -> Query Text
-  ModuleFile :: Name.Module -> Query (Maybe FilePath)
-  ParsedFile :: FilePath -> Query (Maybe (L0.Module Parsed.Ident))
-  FileDefinitions :: FilePath -> Query [L0.TopDef Parsed.Ident]
-  RenamedFile :: FilePath -> Query (Maybe (L0.Module Name.Ident))
-  LLVMModule :: Name.Module -> Query LLVM.Module
+  ModuleFile :: Name.ModuleName -> Query (Maybe FilePath)
+  ParsedFile :: FilePath -> Query (Maybe L0.Module)
+  FileDefinitions :: FilePath -> Query [L0.TopDef]
+  RenamedFile :: FilePath -> Query (Maybe L1.Module)
+  LLVMModule :: Name.ModuleName -> Query LLVM.Module
   LLVMFiles :: Query [FilePath]
   Executable :: Query (Maybe FilePath)
 

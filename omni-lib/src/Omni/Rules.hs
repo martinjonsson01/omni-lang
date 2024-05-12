@@ -15,11 +15,9 @@ import Omni.Query
 import Omni.Reporting qualified as Reporting
 import Omni.TypeCheck.L00AST qualified as L0
 import Omni.TypeCheck.L00ParseAST (convertParsed)
-import Omni.TypeCheck.L00Rename (renameIdents)
+import Omni.TypeCheck.L01Rename (renameIdents)
 import Rock
-import Text.LLVM (Module (..))
 import Text.LLVM qualified as LLVM
-import Text.LLVM.Triple.Parse qualified as LLVMTriple
 
 -- | Compilation rules, describing how to perform different tasks.
 rules ::
@@ -54,7 +52,7 @@ rules conf (Writer (Writer key)) = case key of
         case mbContents of
           Right contents -> success contents
           Left e -> failure $ Reporting.fileLoad path e
-  ModuleFile name@(Name.Module nameText) ->
+  ModuleFile name@(Name.ModuleName nameText) ->
     nonInput do
       srcDirs <- fetch SourceDirectories
       files <- fetch Files

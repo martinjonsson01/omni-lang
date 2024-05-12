@@ -2,7 +2,7 @@
 
 module Omni.Name (
   -- * Different kinds of names for different constructs
-  Module (..),
+  ModuleName (..),
   Ident (..),
 ) where
 
@@ -12,11 +12,11 @@ import Data.Text
 import Omni.Abs qualified as Parsed
 import Prettyprinter (Pretty (pretty))
 
-newtype Module = Module Text
+newtype ModuleName = ModuleName Text
   deriving (Eq, Ord, Show, IsString, Hashable)
 
-instance Pretty Module where
-  pretty (Module t) = pretty t
+instance Pretty ModuleName where
+  pretty (ModuleName t) = pretty t
 
 newtype Ident = Ident Text
   deriving (Eq, Ord, Show, IsString, Hashable)
@@ -25,7 +25,11 @@ instance Pretty Ident where
   pretty (Ident t) = pretty t
 
 instance Pretty Parsed.Name where
-  pretty (Parsed.Name _ ident) = pretty ident
+  pretty (Parsed.UpperName _ ident) = pretty ident
+  pretty (Parsed.LowerName _ ident) = pretty ident
 
-instance Pretty Parsed.Ident where
-  pretty (Parsed.Ident t) = pretty t
+instance Pretty Parsed.UpperIdent where
+  pretty (Parsed.UpperIdent t) = pretty t
+
+instance Pretty Parsed.LowerIdent where
+  pretty (Parsed.LowerIdent t) = pretty t

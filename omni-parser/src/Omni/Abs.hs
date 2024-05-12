@@ -25,42 +25,188 @@ import qualified Data.Text
 import qualified Data.Data    as C (Data, Typeable)
 import qualified GHC.Generics as C (Generic)
 
+type TypeName = TypeName' BNFC'Position
+data TypeName' a = TypeName a UpperIdent
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
+type ConstructorName = ConstructorName' BNFC'Position
+data ConstructorName' a = ConstructorName a UpperIdent
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
 type Name = Name' BNFC'Position
-data Name' a = Name a Ident
+data Name' a = UpperName a UpperIdent | LowerName a LowerIdent
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
+type TypeVarName = TypeVarName' BNFC'Position
+data TypeVarName' a = TypeVarName a LowerIdent
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
+type EffectVarName = EffectVarName' BNFC'Position
+data EffectVarName' a = EffectVarName a LowerIdent
   deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
 
 type Module = Module' BNFC'Position
-data Module' a = Module a (Name' a) [TopDef' a]
+data Module' a = Module a UpperIdent [TopDef' a]
   deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
 
 type TopDef = TopDef' BNFC'Position
 data TopDef' a
-    = FnDef a (Name' a) (ParamList' a) (Type' a) (Exp' a)
+    = TopFnDef a (FnDef' a)
+    | TopDataDef a (DataDef' a)
+    | TopInterfaceDef a (InterfaceDef' a)
   deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
 
-type ParamList = ParamList' BNFC'Position
-data ParamList' a = ParamList a [Param' a]
+type FnDef = FnDef' BNFC'Position
+data FnDef' a = FnDef a (FnSig' a) (Term' a)
   deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
 
-type Param = Param' BNFC'Position
-data Param' a = Param a (Name' a) (Type' a)
+type FnSig = FnSig' BNFC'Position
+data FnSig' a = FnSig a (Name' a) [NamedPort' a] (PegType' a)
   deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
 
-type Type = Type' BNFC'Position
-data Type' a
-    = TFn a [Type' a] (Type' a) | TUnit a | TInt a | TNamed a (Name' a)
+type NamedPort = NamedPort' BNFC'Position
+data NamedPort' a = NamedPort a (Name' a) (PortType' a)
   deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
 
-type Exp = Exp' BNFC'Position
-data Exp' a
+type DataDef = DataDef' BNFC'Position
+data DataDef' a
+    = DataDef a (TypeName' a) (TypeVarList' a) (ConstructorList' a)
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
+type ConstructorList = ConstructorList' BNFC'Position
+data ConstructorList' a
+    = NoConstructors a | SomeConstructors a [Constructor' a]
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
+type Constructor = Constructor' BNFC'Position
+data Constructor' a
+    = Constructor a (ConstructorName' a) (ValueTypeList' a)
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
+type InterfaceDef = InterfaceDef' BNFC'Position
+data InterfaceDef' a
+    = InterfaceDef a (TypeName' a) (TypeVarList' a) (CommandSigList' a)
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
+type CommandSigList = CommandSigList' BNFC'Position
+data CommandSigList' a
+    = NoCommandSigs a | SomeCommandSigs a [CommandSig' a]
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
+type CommandSig = CommandSig' BNFC'Position
+data CommandSig' a
+    = CommandSig a (Name' a) [NamedParam' a] (ValueType' a)
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
+type NamedParam = NamedParam' BNFC'Position
+data NamedParam' a = NamedParam a (Name' a) (ValueType' a)
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
+type ValueType = ValueType' BNFC'Position
+data ValueType' a
+    = TValueData a (TypeName' a) (TypeArgList' a)
+    | TValueComputation a (ComputationType' a)
+    | TValueParam a (TypeVarName' a)
+    | TUnit a
+    | TInt a
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
+type ValueTypeList = ValueTypeList' BNFC'Position
+data ValueTypeList' a
+    = NoValueTypes a | SomeValueTypes a [ValueType' a]
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
+type ComputationType = ComputationType' BNFC'Position
+data ComputationType' a = TComputation a [PortType' a] (PegType' a)
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
+type PortType = PortType' BNFC'Position
+data PortType' a
+    = TPortNone a (ValueType' a)
+    | TPortSome a (AdjustmentType' a) (ValueType' a)
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
+type PegType = PegType' BNFC'Position
+data PegType' a
+    = TPegNone a (ValueType' a)
+    | TPegSome a (AbilityType' a) (ValueType' a)
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
+type TypeVariable = TypeVariable' BNFC'Position
+data TypeVariable' a
+    = TVar a (TypeVarName' a) | TVarEffect a (EffectVarName' a)
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
+type TypeVarList = TypeVarList' BNFC'Position
+data TypeVarList' a
+    = NoTypeVars a | SomeTypeVars a [TypeVariable' a]
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
+type TypeArgument = TypeArgument' BNFC'Position
+data TypeArgument' a
+    = TArgValue a (ValueType' a) | TArgAbility a (AbilityType' a)
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
+type TypeArgList = TypeArgList' BNFC'Position
+data TypeArgList' a
+    = NoTypeArgs a | SomeTypeArgs a [TypeArgument' a]
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
+type InterfaceType = InterfaceType' BNFC'Position
+data InterfaceType' a = TInterface a (TypeName' a) (TypeArgList' a)
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
+type AbilityType = AbilityType' BNFC'Position
+data AbilityType' a
+    = TAbilityInterfaces a [InterfaceType' a]
+    | TAbilityEffectVar a (EffectVarName' a)
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
+type AdjustmentType = AdjustmentType' BNFC'Position
+data AdjustmentType' a = TAdjustment a [InterfaceType' a]
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
+type Term = Term' BNFC'Position
+data Term' a
     = EIdent a (Name' a)
     | EIntLit a Integer
     | EUnit a
-    | EInfixOp a (Exp' a) InfixOpIdent (Exp' a)
-    | EApplication a (Exp' a) [Exp' a]
+    | EApplication a (Term' a) [Term' a]
+    | EInfixOp a (Term' a) InfixOpIdent (Term' a)
+    | EConSuspendedCom a [ComputationTerm' a]
+    | EConLet a [Binding' a] (Term' a)
   deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
 
-newtype Ident = Ident Data.Text.Text
+type Binding = Binding' BNFC'Position
+data Binding' a
+    = BindAnnotated a (Name' a) (ValueType' a) (Term' a)
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
+type ComputationTerm = ComputationTerm' BNFC'Position
+data ComputationTerm' a
+    = EComputation a [ComputationPattern' a] (Term' a)
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
+type ComputationPattern = ComputationPattern' BNFC'Position
+data ComputationPattern' a
+    = CompPatValue a (ValuePattern' a)
+    | CompPatRequest a (Name' a) (ValuePatternList' a) (Name' a)
+    | CompPatCatchAll a (Name' a)
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
+type ValuePatternList = ValuePatternList' BNFC'Position
+data ValuePatternList' a
+    = NoValuePatterns a | SomeValuePatterns a [ValuePattern' a]
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
+type ValuePattern = ValuePattern' BNFC'Position
+data ValuePattern' a = ValPat a (Name' a) (ValuePatternList' a)
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
+newtype UpperIdent = UpperIdent Data.Text.Text
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Data, C.Typeable, C.Generic, Data.String.IsString)
+
+newtype LowerIdent = LowerIdent Data.Text.Text
   deriving (C.Eq, C.Ord, C.Show, C.Read, C.Data, C.Typeable, C.Generic, Data.String.IsString)
 
 newtype InfixOpIdent = InfixOpIdent Data.Text.Text
@@ -95,9 +241,26 @@ spanBNFC'Position BNFC'NoPosition BNFC'NoPosition = BNFC'NoPosition
 class HasPosition a where
   hasPosition :: a -> BNFC'Position
 
+instance HasPosition TypeName where
+  hasPosition = \case
+    TypeName p _ -> p
+
+instance HasPosition ConstructorName where
+  hasPosition = \case
+    ConstructorName p _ -> p
+
 instance HasPosition Name where
   hasPosition = \case
-    Name p _ -> p
+    UpperName p _ -> p
+    LowerName p _ -> p
+
+instance HasPosition TypeVarName where
+  hasPosition = \case
+    TypeVarName p _ -> p
+
+instance HasPosition EffectVarName where
+  hasPosition = \case
+    EffectVarName p _ -> p
 
 instance HasPosition Module where
   hasPosition = \case
@@ -105,28 +268,142 @@ instance HasPosition Module where
 
 instance HasPosition TopDef where
   hasPosition = \case
-    FnDef p _ _ _ _ -> p
+    TopFnDef p _ -> p
+    TopDataDef p _ -> p
+    TopInterfaceDef p _ -> p
 
-instance HasPosition ParamList where
+instance HasPosition FnDef where
   hasPosition = \case
-    ParamList p _ -> p
+    FnDef p _ _ -> p
 
-instance HasPosition Param where
+instance HasPosition FnSig where
   hasPosition = \case
-    Param p _ _ -> p
+    FnSig p _ _ _ -> p
 
-instance HasPosition Type where
+instance HasPosition NamedPort where
   hasPosition = \case
-    TFn p _ _ -> p
+    NamedPort p _ _ -> p
+
+instance HasPosition DataDef where
+  hasPosition = \case
+    DataDef p _ _ _ -> p
+
+instance HasPosition ConstructorList where
+  hasPosition = \case
+    NoConstructors p -> p
+    SomeConstructors p _ -> p
+
+instance HasPosition Constructor where
+  hasPosition = \case
+    Constructor p _ _ -> p
+
+instance HasPosition InterfaceDef where
+  hasPosition = \case
+    InterfaceDef p _ _ _ -> p
+
+instance HasPosition CommandSigList where
+  hasPosition = \case
+    NoCommandSigs p -> p
+    SomeCommandSigs p _ -> p
+
+instance HasPosition CommandSig where
+  hasPosition = \case
+    CommandSig p _ _ _ -> p
+
+instance HasPosition NamedParam where
+  hasPosition = \case
+    NamedParam p _ _ -> p
+
+instance HasPosition ValueType where
+  hasPosition = \case
+    TValueData p _ _ -> p
+    TValueComputation p _ -> p
+    TValueParam p _ -> p
     TUnit p -> p
     TInt p -> p
-    TNamed p _ -> p
 
-instance HasPosition Exp where
+instance HasPosition ValueTypeList where
+  hasPosition = \case
+    NoValueTypes p -> p
+    SomeValueTypes p _ -> p
+
+instance HasPosition ComputationType where
+  hasPosition = \case
+    TComputation p _ _ -> p
+
+instance HasPosition PortType where
+  hasPosition = \case
+    TPortNone p _ -> p
+    TPortSome p _ _ -> p
+
+instance HasPosition PegType where
+  hasPosition = \case
+    TPegNone p _ -> p
+    TPegSome p _ _ -> p
+
+instance HasPosition TypeVariable where
+  hasPosition = \case
+    TVar p _ -> p
+    TVarEffect p _ -> p
+
+instance HasPosition TypeVarList where
+  hasPosition = \case
+    NoTypeVars p -> p
+    SomeTypeVars p _ -> p
+
+instance HasPosition TypeArgument where
+  hasPosition = \case
+    TArgValue p _ -> p
+    TArgAbility p _ -> p
+
+instance HasPosition TypeArgList where
+  hasPosition = \case
+    NoTypeArgs p -> p
+    SomeTypeArgs p _ -> p
+
+instance HasPosition InterfaceType where
+  hasPosition = \case
+    TInterface p _ _ -> p
+
+instance HasPosition AbilityType where
+  hasPosition = \case
+    TAbilityInterfaces p _ -> p
+    TAbilityEffectVar p _ -> p
+
+instance HasPosition AdjustmentType where
+  hasPosition = \case
+    TAdjustment p _ -> p
+
+instance HasPosition Term where
   hasPosition = \case
     EIdent p _ -> p
     EIntLit p _ -> p
     EUnit p -> p
-    EInfixOp p _ _ _ -> p
     EApplication p _ _ -> p
+    EInfixOp p _ _ _ -> p
+    EConSuspendedCom p _ -> p
+    EConLet p _ _ -> p
+
+instance HasPosition Binding where
+  hasPosition = \case
+    BindAnnotated p _ _ _ -> p
+
+instance HasPosition ComputationTerm where
+  hasPosition = \case
+    EComputation p _ _ -> p
+
+instance HasPosition ComputationPattern where
+  hasPosition = \case
+    CompPatValue p _ -> p
+    CompPatRequest p _ _ _ -> p
+    CompPatCatchAll p _ -> p
+
+instance HasPosition ValuePatternList where
+  hasPosition = \case
+    NoValuePatterns p -> p
+    SomeValuePatterns p _ -> p
+
+instance HasPosition ValuePattern where
+  hasPosition = \case
+    ValPat p _ _ -> p
 

@@ -12,11 +12,10 @@ import Lens.Micro
 import Omni.Config
 import Omni.Monad
 import Omni.Name qualified as Name
-import Omni.Name qualified as Named
 import Omni.Query qualified as Query
 import Omni.Reporting
 import Omni.Reporting qualified as Error
-import Omni.TypeCheck.L00AST qualified as L0
+import Omni.TypeCheck.L01RenamedAST qualified as L1
 import Rock (fetch)
 import System.FilePath
 import Text.LLVM.PP qualified as LLVMPP
@@ -27,8 +26,8 @@ generateLLVMModules = do
   binDir <- fetch Query.BinariesDirectory
   filePaths <- toList <$> fetch Query.Files
   modules <- catMaybes <$> mapM (fetch . Query.RenamedFile) filePaths
-  forM modules \(L0.Module _ (Named.Module name) _) -> do
-    llvmModule <- fetch $ Query.LLVMModule (Name.Module name)
+  forM modules \(L1.Module _ (Name.ModuleName name) _) -> do
+    llvmModule <- fetch $ Query.LLVMModule (Name.ModuleName name)
     let llvmFileName = binDir </> toS name <.> "ll"
         llvmText =
           LLVMPP.withConfig
