@@ -16,6 +16,7 @@ import Omni.Name qualified as Name
 import Omni.TypeCheck.L00AST qualified as L0
 import Omni.TypeCheck.L01RenamedAST qualified as L1
 import Text.LLVM qualified as LLVM
+import qualified Omni.TypeCheck.L02Elaborated as L2
 
 -- | Different things the compiler can be asked to do.
 data Query a where
@@ -27,6 +28,8 @@ data Query a where
   ParsedFile :: FilePath -> Query (Maybe L0.Module)
   FileDefinitions :: FilePath -> Query [L0.TopDef]
   RenamedFile :: FilePath -> Query (Maybe L1.Module)
+  ElaboratedModule :: Name.ModuleName -> Query (Maybe L2.Module)
+  Modules :: Query [L2.Module]
   LLVMModule :: Name.ModuleName -> Query LLVM.Module
   LLVMFiles :: Query [FilePath]
   Executable :: Query (Maybe FilePath)
@@ -53,9 +56,11 @@ instance Hashable (Query a) where
     ParsedFile a -> h 5 a
     FileDefinitions a -> h 6 a
     RenamedFile a -> h 7 a
-    LLVMModule a -> h 8 a
-    LLVMFiles -> h 9 ()
-    Executable -> h 10 ()
+    ElaboratedModule a -> h 8 a
+    Modules -> h 9 ()
+    LLVMModule a -> h 10 a
+    LLVMFiles -> h 11 ()
+    Executable -> h 12 ()
    where
     -- Hashes the query key with a unique index and its payload.
     {-# INLINE h #-}

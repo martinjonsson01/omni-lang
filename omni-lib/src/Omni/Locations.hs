@@ -13,12 +13,13 @@ module Omni.Locations (
   fromList,
   singleLoc,
   convertPos,
+  generated,
 ) where
 
 import Data.Set (Set)
+import Data.Set qualified as Set
 import Omni.Abs qualified as Parsed
 import Prettyprinter
-import qualified Data.Set as Set
 
 -- | Things that have a location in the source code.
 class Located a where
@@ -26,20 +27,23 @@ class Located a where
 
 -- | A collection of unique locations.
 newtype Locs = Locs {unwrapLocs :: Set Loc}
- deriving (Semigroup, Monoid, Show, Eq, Ord)
+  deriving (Semigroup, Monoid, Show, Eq, Ord)
 
-fromList :: [Loc] -> Locs 
+fromList :: [Loc] -> Locs
 fromList = Locs . Set.fromList
 
-singleLoc :: Loc -> Locs 
+singleLoc :: Loc -> Locs
 singleLoc = Locs . Set.singleton
 
-instance Pretty Locs where 
+generated :: Loc
+generated = Generated
+
+instance Pretty Locs where
   pretty = align . sep . map pretty . Set.toList . unwrapLocs
 
 -- | A location of a part of the code.
 data Loc = Generated | Src SrcLoc
-  deriving (Show, Eq, Ord)
+  deriving (Eq, Ord, Show)
 
 instance Pretty Loc where
   pretty Generated = "(generated)"

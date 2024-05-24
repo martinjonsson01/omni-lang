@@ -1,5 +1,8 @@
 module SimpleFunctionDeclaration()
 
+// Prelude isn't implemented yet, so provide dummy + 
+infixl +(x: Int, y: Int): Int = 0
+
 nullary_function(): Int = 1
 
 oneline_function(x: Int, y: Int) : Int = x + y
@@ -8,4 +11,4 @@ wrapped_function(x: Int, y: Int) : Int =
   x + y
 
 main() : Int =
-  oneline_function(nullary_function, 2)
+  oneline_function(nullary_function(), 2)

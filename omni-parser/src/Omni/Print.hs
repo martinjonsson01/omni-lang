@@ -157,6 +157,10 @@ instance Print (Omni.Abs.Name' a) where
     Omni.Abs.UpperName _ upperident -> prPrec i 0 (concatD [prt 0 upperident])
     Omni.Abs.LowerName _ lowerident -> prPrec i 0 (concatD [prt 0 lowerident])
 
+instance Print (Omni.Abs.InfixOpName' a) where
+  prt i = \case
+    Omni.Abs.InfixOpName _ infixopident -> prPrec i 0 (concatD [prt 0 infixopident])
+
 instance Print (Omni.Abs.TypeVarName' a) where
   prt i = \case
     Omni.Abs.TypeVarName _ lowerident -> prPrec i 0 (concatD [prt 0 lowerident])
@@ -164,6 +168,11 @@ instance Print (Omni.Abs.TypeVarName' a) where
 instance Print (Omni.Abs.EffectVarName' a) where
   prt i = \case
     Omni.Abs.EffectVarName _ lowerident -> prPrec i 0 (concatD [prt 0 lowerident])
+
+instance Print (Omni.Abs.FnName' a) where
+  prt i = \case
+    Omni.Abs.OrdinaryFnName _ name -> prPrec i 0 (concatD [prt 0 name])
+    Omni.Abs.InfixFnName _ infixopident -> prPrec i 0 (concatD [doc (showString "infixl"), prt 0 infixopident])
 
 instance Print (Omni.Abs.Module' a) where
   prt i = \case
@@ -185,7 +194,7 @@ instance Print (Omni.Abs.FnDef' a) where
 
 instance Print (Omni.Abs.FnSig' a) where
   prt i = \case
-    Omni.Abs.FnSig _ name namedports pegtype -> prPrec i 0 (concatD [prt 0 name, doc (showString "("), prt 0 namedports, doc (showString ")"), doc (showString ":"), prt 0 pegtype])
+    Omni.Abs.FnSig _ fnname namedports pegtype -> prPrec i 0 (concatD [prt 0 fnname, doc (showString "("), prt 0 namedports, doc (showString ")"), doc (showString ":"), prt 0 pegtype])
 
 instance Print (Omni.Abs.NamedPort' a) where
   prt i = \case
@@ -332,8 +341,8 @@ instance Print (Omni.Abs.Term' a) where
     Omni.Abs.EIntLit _ n -> prPrec i 2 (concatD [prt 0 n])
     Omni.Abs.EUnit _ -> prPrec i 2 (concatD [doc (showString "("), doc (showString ")")])
     Omni.Abs.EApplication _ term terms -> prPrec i 1 (concatD [prt 2 term, doc (showString "("), prt 0 terms, doc (showString ")")])
-    Omni.Abs.EInfixOp _ term1 infixopident term2 -> prPrec i 1 (concatD [prt 1 term1, prt 0 infixopident, prt 2 term2])
-    Omni.Abs.EConSuspendedCom _ computationterms -> prPrec i 1 (concatD [doc (showString "{"), prt 0 computationterms, doc (showString "}")])
+    Omni.Abs.EInfixOp _ term1 infixopname term2 -> prPrec i 1 (concatD [prt 1 term1, prt 0 infixopname, prt 2 term2])
+    Omni.Abs.EThunk _ computationterms -> prPrec i 1 (concatD [doc (showString "{"), prt 0 computationterms, doc (showString "}")])
     Omni.Abs.EConLet _ bindings term -> prPrec i 0 (concatD [doc (showString "let"), prt 0 bindings, doc (showString "in"), prt 0 term])
 
 instance Print [Omni.Abs.Term' a] where
@@ -343,6 +352,7 @@ instance Print [Omni.Abs.Term' a] where
 
 instance Print (Omni.Abs.Binding' a) where
   prt i = \case
+    Omni.Abs.Bind _ name term -> prPrec i 0 (concatD [prt 0 name, doc (showString "="), prt 0 term])
     Omni.Abs.BindAnnotated _ name valuetype term -> prPrec i 0 (concatD [prt 0 name, doc (showString ":"), prt 0 valuetype, doc (showString "="), prt 0 term])
 
 instance Print [Omni.Abs.Binding' a] where

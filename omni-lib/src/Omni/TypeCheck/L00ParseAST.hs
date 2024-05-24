@@ -25,7 +25,7 @@ convertParsed file = \case
   toLoc = convertPos file
 
   toText :: Parsed.Name -> (Parsed.BNFC'Position, Text)
-  toText = \case 
+  toText = \case
     Parsed.UpperName loc (Parsed.UpperIdent text) -> (loc, text)
     Parsed.LowerName loc (Parsed.LowerIdent text) -> (loc, text)
 
@@ -34,27 +34,39 @@ convertParsed file = \case
 
   convertEffectVarName :: Parsed.EffectVarName -> EffectVarName
   convertEffectVarName (Parsed.EffectVarName loc (Parsed.LowerIdent name)) =
-    EffectVarName $ GenName
-      (toLoc loc)
-      name
+    EffectVarName $
+      GenName
+        (toLoc loc)
+        name
 
   convertTypeName :: Parsed.TypeName -> TypeName
   convertTypeName (Parsed.TypeName loc (Parsed.UpperIdent name)) =
-    TypeName $ GenName
-      (toLoc loc)
-      name
+    TypeName $
+      GenName
+        (toLoc loc)
+        name
 
   convertTypeVarName :: Parsed.TypeVarName -> TypeVarName
   convertTypeVarName (Parsed.TypeVarName loc (Parsed.LowerIdent name)) =
-    TypeVarName $ GenName
-      (toLoc loc)
-      name
+    TypeVarName $
+      GenName
+        (toLoc loc)
+        name
 
   convertConstructorName :: Parsed.ConstructorName -> ConstructorName
   convertConstructorName (Parsed.ConstructorName loc (Parsed.UpperIdent name)) =
-    ConstructorName $ GenName
-      (toLoc loc)
-      name
+    ConstructorName $
+      GenName
+        (toLoc loc)
+        name
+
+  convertInfixOpName :: Parsed.InfixOpName -> InfixOpName
+  convertInfixOpName (Parsed.InfixOpName loc (Parsed.InfixOpIdent name)) =
+    InfixOpName $ GenName (toLoc loc) name
+
+  convertFnName :: Parsed.FnName -> Name
+  convertFnName (Parsed.InfixFnName loc (Parsed.InfixOpIdent name)) = Name $ GenName (toLoc loc) name
+  convertFnName (Parsed.OrdinaryFnName _ name) = convertName name
 
   convertTopDef :: Parsed.TopDef -> TopDef
   convertTopDef = \case
@@ -83,10 +95,10 @@ convertParsed file = \case
       EInfixOp
         (toLoc loc)
         (convertTerm t1)
-        op
+        (convertInfixOpName op)
         (convertTerm t2)
-    Parsed.EConSuspendedCom loc comps ->
-      EConSuspendedCom
+    Parsed.EThunk loc comps ->
+      EThunk
         (toLoc loc)
         (map convertComputationTerm comps)
     Parsed.EConLet loc bindings body ->
@@ -138,12 +150,14 @@ convertParsed file = \case
       (convertName name)
       (convertValueType valTyp)
       (convertTerm val)
+  convertBinding (Parsed.Bind loc name val) =
+    Bind (toLoc loc) (convertName name) (convertTerm val)
 
   convertFnSig :: Parsed.FnSig -> FnSig
   convertFnSig (Parsed.FnSig loc name ports returnTyp) =
     FnSig
       (toLoc loc)
-      (convertName name)
+      (convertFnName name)
       (map convertPort ports)
       (convertPegType returnTyp)
 
@@ -191,11 +205,13 @@ convertParsed file = \case
     Parsed.TAbilityInterfaces loc intTyps ->
       TAbilityInterfaces
         (toLoc loc)
+        (AbilityInitEffectVar generated (EffectVarName (GenName generated "ε")))
         (map convertInterfaceType intTyps)
     Parsed.TAbilityEffectVar loc eVar ->
-      TAbilityEffectVar
+      TAbilityInterfaces
         (toLoc loc)
-        (convertEffectVarName eVar)
+        (AbilityInitEffectVar (toLoc loc) (convertEffectVarName eVar))
+        []
 
   convertValueType :: Parsed.ValueType -> ValueType
   convertValueType = \case

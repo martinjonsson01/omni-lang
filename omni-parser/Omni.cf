@@ -7,6 +7,8 @@ token UpperIdent (upper (letter | digit | '_' | '\'')*) ;
 
 token LowerIdent (lower (letter | digit | '_' | '\'')*) ;
 
+token InfixOpIdent ["+-*/<>=?^"]+ ;
+
 TypeName. TypeName ::= UpperIdent ;
 
 ConstructorName. ConstructorName ::= UpperIdent ;
@@ -14,9 +16,14 @@ ConstructorName. ConstructorName ::= UpperIdent ;
 UpperName. Name ::= UpperIdent ;
 LowerName. Name ::= LowerIdent ;
 
+InfixOpName. InfixOpName ::= InfixOpIdent ;
+
 TypeVarName. TypeVarName ::= LowerIdent ;
 
 EffectVarName. EffectVarName ::= LowerIdent ;
+
+OrdinaryFnName. FnName ::= Name ;
+InfixFnName.    FnName ::= "infixl" InfixOpIdent ;
 
 -- Modules ------------------------------------------------
 
@@ -34,7 +41,7 @@ separator TopDef "" ;
 
 FnDef. FnDef ::= FnSig "=" Term ;
 
-FnSig. FnSig ::= Name "(" [NamedPort] ")" ":" PegType ;
+FnSig. FnSig ::= FnName "(" [NamedPort] ")" ":" PegType ;
 
 NamedPort. NamedPort ::= Name ":" PortType ;
 
@@ -111,18 +118,17 @@ TAdjustment.        AdjustmentType ::= [InterfaceType] ;
 
 -- Terms --------------------------------------------------
 
-token InfixOpIdent ["+-*/<>=?^"]+ ;
-
 EIdent.           Term2 ::= Name ;
 EIntLit.          Term2 ::= Integer ;
 EUnit.            Term2 ::= "(" ")" ;
 EApplication.     Term1 ::= Term2 "(" [Term] ")" ;
-EInfixOp.         Term1 ::= Term1 InfixOpIdent Term2 ;
-EConSuspendedCom. Term1 ::= "{" [ComputationTerm] "}" ;
+EInfixOp.         Term1 ::= Term1 InfixOpName Term2 ;
+EThunk.           Term1 ::= "{" [ComputationTerm] "}" ;
 EConLet.          Term  ::= "let" [Binding] "in" Term ;
 coercions         Term  2 ;
 separator         Term  "," ;
 
+Bind.             Binding ::= Name "=" Term ;
 BindAnnotated.    Binding ::= Name ":" ValueType "=" Term ;
 separator         Binding "," ;
 

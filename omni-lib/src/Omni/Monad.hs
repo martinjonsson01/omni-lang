@@ -9,8 +9,12 @@ module Omni.Monad (
 
   -- * Helpers
   report,
+  reportM,
   withReport,
+  withReportM,
   failWith,
+  failWithM,
+  orWithReport,
   fetchMaybe,
 ) where
 
@@ -56,23 +60,40 @@ newtype CompileM env a = CompileM
     , Katip
     , MonadReader env
     , MonadWriter Reports
-    , MonadFail
     , MonadFetch Query
     )
 
 instance (MonadFetch Query m) => MonadFetch Query (KatipContextT m)
 
+-- | Like @failWith@, but inside another monad.
+failWithM :: (MonadTrans t) => Report -> t (CompileM env) a
+failWithM r = reportM r >> lift mzero
+
 -- | Reports and then short-circuits the current computation.
 failWith :: Report -> CompileM env a
 failWith r = report r >> mzero
+
+-- | Like @report@, but inside another monad.
+reportM :: (MonadTrans t) => Report -> t (CompileM env) ()
+reportM = lift . report
 
 -- | Include a given report in the output.
 report :: Report -> CompileM env ()
 report = tell . Seq.singleton
 
--- | Returns the given value, reporting the given error as a side-effect.
+-- | Like @withReport@, but inside another monad..
+withReportM :: (MonadTrans t) => a -> Report -> t (CompileM env) a
+withReportM a r = lift $ tell (Seq.singleton r) >> return a
+
+-- | Returns the given value, submitting the given report as a side-effect.
 withReport :: a -> Report -> CompileM env a
 withReport a r = tell (Seq.singleton r) >> return a
+
+{- | Unwraps the value in the computation, or returns a replacement value and
+submits the given report as a side-effect.
+-}
+orWithReport :: (MonadTrans t) => CompileM env a -> (a, Report) -> t (CompileM env) a
+orWithReport m (replacement, r) = lift $ m <|> replacement `withReport` r
 
 {- | Fetches the result of a query which might not return anything,
 failing the computation if no result was returned.

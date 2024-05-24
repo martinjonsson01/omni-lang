@@ -193,9 +193,11 @@ resWords =
     (b "<" 6
        (b "," 3 (b ")" 2 (b "(" 1 N N) N) (b ":" 5 (b "->" 4 N N) N))
        (b "Int" 9 (b ">" 8 (b "=" 7 N N) N) (b "Unit" 10 N N)))
-    (b "let" 16
-       (b "in" 14 (b "data" 13 (b "]" 12 N N) N) (b "interface" 15 N N))
-       (b "|" 19 (b "{" 18 (b "module" 17 N N) N) (b "}" 20 N N)))
+    (b "let" 17
+       (b "in" 14
+          (b "data" 13 (b "]" 12 N N) N)
+          (b "interface" 16 (b "infixl" 15 N N) N))
+       (b "|" 20 (b "{" 19 (b "module" 18 N N) N) (b "}" 21 N N)))
   where
   b s n = B bs (TS bs n)
     where

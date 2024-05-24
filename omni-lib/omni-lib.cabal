@@ -1,6 +1,6 @@
 cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.36.0.
+-- This file has been generated from package.yaml by hpack version 0.34.5.
 --
 -- see: https://github.com/sol/hpack
 
@@ -26,15 +26,16 @@ library
       Omni.Name
       Omni.Query
       Omni.Reporting
+      Omni.ReportView
       Omni.Rules
       Omni.TypeCheck.L00AST
       Omni.TypeCheck.L00ParseAST
       Omni.TypeCheck.L01Rename
       Omni.TypeCheck.L01RenamedAST
+      Omni.TypeCheck.L02Elaborate
+      Omni.TypeCheck.L02Elaborated
       Omni.TypeCheck.TypeChecker
   other-modules:
-      Paths_omni_lib
-  autogen-modules:
       Paths_omni_lib
   hs-source-dirs:
       src
@@ -117,8 +118,6 @@ test-suite omni-lib-test
   main-is: Spec.hs
   other-modules:
       Omni.CompilerSpec
-      Paths_omni_lib
-  autogen-modules:
       Paths_omni_lib
   hs-source-dirs:
       test

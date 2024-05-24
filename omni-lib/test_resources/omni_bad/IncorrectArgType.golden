@@ -1,0 +1,7 @@
+error:
+expected type Int
+but
+'EUnit (Src (Loc {sourceFile = "test_resources\\omni_bad\\IncorrectArgType.omni", range = SrcRange {rangeFrom = SrcPos {posLine = 5, posColumn = 29}, rangeTo = SrcPos {posLine = 5, posColumn = 31}}}))'
+has type
+Unit
+     

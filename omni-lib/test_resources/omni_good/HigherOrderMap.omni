@@ -1,0 +1,23 @@
+module HigherOrderMap()
+
+// Prelude isn't implemented yet, so provide dummy + 
+infixl +(x: Int, y: Int): Int = 0
+
+// Simlating case-expression using reverse function application.
+on(x: a, f: {(a): b}): b = f(x)
+
+// Simple linked list.
+data List(a) = Nil | Cons( a, List(a) )
+
+map(f: {(a): b}, as: List(a)): List(b) = 
+  on(
+    as, 
+    { Nil         -> Nil
+    | Cons(x, xs) -> Cons(f(x), map(f, xs)) }
+  )
+
+addOne(x: Int): Int = x + 1
+
+main() : List(Int) = 
+  let elems: List(Int) = Cons(0, Cons(1, Cons(2, Cons(3, Nil))))
+  in map(addOne, elems)

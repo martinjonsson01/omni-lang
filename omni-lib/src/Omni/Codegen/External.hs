@@ -5,8 +5,6 @@ import Control.Monad.IO.Class
 import Control.Monad.Reader
 import Data.ByteString.Lazy qualified as Lazy
 import Data.Conduit.Process.Typed
-import Data.Foldable
-import Data.Maybe
 import Data.String.Conv
 import Lens.Micro
 import Omni.Config
@@ -15,7 +13,7 @@ import Omni.Name qualified as Name
 import Omni.Query qualified as Query
 import Omni.Reporting
 import Omni.Reporting qualified as Error
-import Omni.TypeCheck.L01RenamedAST qualified as L1
+import Omni.TypeCheck.L02Elaborated qualified as L2
 import Rock (fetch)
 import System.FilePath
 import Text.LLVM.PP qualified as LLVMPP
@@ -24,9 +22,8 @@ import Text.LLVM.PP qualified as LLVMPP
 generateLLVMModules :: CompileM env [FilePath]
 generateLLVMModules = do
   binDir <- fetch Query.BinariesDirectory
-  filePaths <- toList <$> fetch Query.Files
-  modules <- catMaybes <$> mapM (fetch . Query.RenamedFile) filePaths
-  forM modules \(L1.Module _ (Name.ModuleName name) _) -> do
+  modules <- fetch Query.Modules
+  forM modules \(L2.Module _ (Name.ModuleName name) _ _) -> do
     llvmModule <- fetch $ Query.LLVMModule (Name.ModuleName name)
     let llvmFileName = binDir </> toS name <.> "ll"
         llvmText =

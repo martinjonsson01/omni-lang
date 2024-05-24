@@ -3,10 +3,11 @@
 module Omni.Config (
   Directory,
   Config (..),
-  HasConfig(..),
+  HasConfig (..),
   OptimizationLevel (..),
 ) where
 
+import Data.Text (Text)
 import Lens.Micro.TH (makeClassy)
 
 type Directory = FilePath
@@ -14,18 +15,20 @@ type Directory = FilePath
 -- | Compiler-wide configuration.
 data Config = Config
   { _configOptLevel :: !OptimizationLevel
+  , _configMainModule :: Text
   , _configInputDirectories :: ![Directory]
   , _configInputFiles :: ![FilePath]
   , _configBinariesDirectory :: !Directory
   , _configExecutableOutputPath :: !FilePath
   , _configTraceFetch :: !Bool
   }
- deriving (Eq, Show)
+  deriving (Eq, Show)
 
 instance Semigroup Config where
   a <> b =
     Config
       { _configOptLevel = _configOptLevel a <> _configOptLevel b
+      , _configMainModule = "Main" -- can't combine module names
       , _configInputDirectories =
           _configInputDirectories a <> _configInputDirectories b
       , _configInputFiles = _configInputFiles a <> _configInputFiles b
@@ -43,6 +46,7 @@ instance Monoid Config where
   mempty =
     Config
       { _configOptLevel = O0
+      , _configMainModule = "Main"
       , _configInputDirectories = mempty
       , _configInputFiles = mempty
       , _configBinariesDirectory = "./bin"
@@ -52,7 +56,7 @@ instance Monoid Config where
 
 -- | Which level of optimization to apply.
 data OptimizationLevel = O0 | O1 | O2 | O3
- deriving (Eq)
+  deriving (Eq)
 
 -- | Higher optimization levels dominate.
 instance Semigroup OptimizationLevel where

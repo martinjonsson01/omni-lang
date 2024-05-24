@@ -1,6 +1,6 @@
 cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.36.0.
+-- This file has been generated from package.yaml by hpack version 0.34.5.
 --
 -- see: https://github.com/sol/hpack
 
@@ -19,8 +19,6 @@ library
       Omni.Par
       Omni.Print
   other-modules:
-      Paths_omni_parser
-  autogen-modules:
       Paths_omni_parser
   hs-source-dirs:
       src

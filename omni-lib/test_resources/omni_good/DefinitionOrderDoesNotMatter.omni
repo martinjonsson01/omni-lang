@@ -1,0 +1,6 @@
+module DefinitionOrderDoesNotMatter()
+
+// Uses some_func, which is not declared until later on, but should still work.
+main() : Int = some_func(1)
+
+some_func(x: Int): Int = x

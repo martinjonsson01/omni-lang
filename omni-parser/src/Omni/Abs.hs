@@ -37,12 +37,21 @@ type Name = Name' BNFC'Position
 data Name' a = UpperName a UpperIdent | LowerName a LowerIdent
   deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
 
+type InfixOpName = InfixOpName' BNFC'Position
+data InfixOpName' a = InfixOpName a InfixOpIdent
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
 type TypeVarName = TypeVarName' BNFC'Position
 data TypeVarName' a = TypeVarName a LowerIdent
   deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
 
 type EffectVarName = EffectVarName' BNFC'Position
 data EffectVarName' a = EffectVarName a LowerIdent
+  deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
+
+type FnName = FnName' BNFC'Position
+data FnName' a
+    = OrdinaryFnName a (Name' a) | InfixFnName a InfixOpIdent
   deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
 
 type Module = Module' BNFC'Position
@@ -61,7 +70,7 @@ data FnDef' a = FnDef a (FnSig' a) (Term' a)
   deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
 
 type FnSig = FnSig' BNFC'Position
-data FnSig' a = FnSig a (Name' a) [NamedPort' a] (PegType' a)
+data FnSig' a = FnSig a (FnName' a) [NamedPort' a] (PegType' a)
   deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
 
 type NamedPort = NamedPort' BNFC'Position
@@ -172,14 +181,15 @@ data Term' a
     | EIntLit a Integer
     | EUnit a
     | EApplication a (Term' a) [Term' a]
-    | EInfixOp a (Term' a) InfixOpIdent (Term' a)
-    | EConSuspendedCom a [ComputationTerm' a]
+    | EInfixOp a (Term' a) (InfixOpName' a) (Term' a)
+    | EThunk a [ComputationTerm' a]
     | EConLet a [Binding' a] (Term' a)
   deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
 
 type Binding = Binding' BNFC'Position
 data Binding' a
-    = BindAnnotated a (Name' a) (ValueType' a) (Term' a)
+    = Bind a (Name' a) (Term' a)
+    | BindAnnotated a (Name' a) (ValueType' a) (Term' a)
   deriving (C.Eq, C.Ord, C.Show, C.Read, C.Functor, C.Foldable, C.Traversable, C.Data, C.Typeable, C.Generic)
 
 type ComputationTerm = ComputationTerm' BNFC'Position
@@ -254,6 +264,10 @@ instance HasPosition Name where
     UpperName p _ -> p
     LowerName p _ -> p
 
+instance HasPosition InfixOpName where
+  hasPosition = \case
+    InfixOpName p _ -> p
+
 instance HasPosition TypeVarName where
   hasPosition = \case
     TypeVarName p _ -> p
@@ -261,6 +275,11 @@ instance HasPosition TypeVarName where
 instance HasPosition EffectVarName where
   hasPosition = \case
     EffectVarName p _ -> p
+
+instance HasPosition FnName where
+  hasPosition = \case
+    OrdinaryFnName p _ -> p
+    InfixFnName p _ -> p
 
 instance HasPosition Module where
   hasPosition = \case
@@ -381,11 +400,12 @@ instance HasPosition Term where
     EUnit p -> p
     EApplication p _ _ -> p
     EInfixOp p _ _ _ -> p
-    EConSuspendedCom p _ -> p
+    EThunk p _ -> p
     EConLet p _ _ -> p
 
 instance HasPosition Binding where
   hasPosition = \case
+    Bind p _ _ -> p
     BindAnnotated p _ _ _ -> p
 
 instance HasPosition ComputationTerm where

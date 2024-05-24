@@ -38,12 +38,13 @@ import qualified Data.Text
   ']'            { PT _ _ (TS _ 12)          }
   'data'         { PT _ _ (TS _ 13)          }
   'in'           { PT _ _ (TS _ 14)          }
-  'interface'    { PT _ _ (TS _ 15)          }
-  'let'          { PT _ _ (TS _ 16)          }
-  'module'       { PT _ _ (TS _ 17)          }
-  '{'            { PT _ _ (TS _ 18)          }
-  '|'            { PT _ _ (TS _ 19)          }
-  '}'            { PT _ _ (TS _ 20)          }
+  'infixl'       { PT _ _ (TS _ 15)          }
+  'interface'    { PT _ _ (TS _ 16)          }
+  'let'          { PT _ _ (TS _ 17)          }
+  'module'       { PT _ _ (TS _ 18)          }
+  '{'            { PT _ _ (TS _ 19)          }
+  '|'            { PT _ _ (TS _ 20)          }
+  '}'            { PT _ _ (TS _ 21)          }
   L_integ        { PT _ _ (TI _)             }
   L_UpperIdent   { PT _ _ (T_UpperIdent _)   }
   L_LowerIdent   { PT _ _ (T_LowerIdent _)   }
@@ -76,6 +77,10 @@ Name
   : UpperIdent { (Omni.Abs.spanBNFC'Position (fst $1) (fst $1), Omni.Abs.UpperName (Omni.Abs.spanBNFC'Position (fst $1) (fst $1)) (snd $1)) }
   | LowerIdent { (Omni.Abs.spanBNFC'Position (fst $1) (fst $1), Omni.Abs.LowerName (Omni.Abs.spanBNFC'Position (fst $1) (fst $1)) (snd $1)) }
 
+InfixOpName :: { (Omni.Abs.BNFC'Position, Omni.Abs.InfixOpName) }
+InfixOpName
+  : InfixOpIdent { (Omni.Abs.spanBNFC'Position (fst $1) (fst $1), Omni.Abs.InfixOpName (Omni.Abs.spanBNFC'Position (fst $1) (fst $1)) (snd $1)) }
+
 TypeVarName :: { (Omni.Abs.BNFC'Position, Omni.Abs.TypeVarName) }
 TypeVarName
   : LowerIdent { (Omni.Abs.spanBNFC'Position (fst $1) (fst $1), Omni.Abs.TypeVarName (Omni.Abs.spanBNFC'Position (fst $1) (fst $1)) (snd $1)) }
@@ -83,6 +88,11 @@ TypeVarName
 EffectVarName :: { (Omni.Abs.BNFC'Position, Omni.Abs.EffectVarName) }
 EffectVarName
   : LowerIdent { (Omni.Abs.spanBNFC'Position (fst $1) (fst $1), Omni.Abs.EffectVarName (Omni.Abs.spanBNFC'Position (fst $1) (fst $1)) (snd $1)) }
+
+FnName :: { (Omni.Abs.BNFC'Position, Omni.Abs.FnName) }
+FnName
+  : Name { (Omni.Abs.spanBNFC'Position (fst $1) (fst $1), Omni.Abs.OrdinaryFnName (Omni.Abs.spanBNFC'Position (fst $1) (fst $1)) (snd $1)) }
+  | 'infixl' InfixOpIdent { (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan $1)) (fst $2), Omni.Abs.InfixFnName (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan $1)) (fst $2)) (snd $2)) }
 
 Module :: { (Omni.Abs.BNFC'Position, Omni.Abs.Module) }
 Module
@@ -105,7 +115,7 @@ FnDef
 
 FnSig :: { (Omni.Abs.BNFC'Position, Omni.Abs.FnSig) }
 FnSig
-  : Name '(' ListNamedPort ')' ':' PegType { (Omni.Abs.spanBNFC'Position (fst $1) (fst $6), Omni.Abs.FnSig (Omni.Abs.spanBNFC'Position (fst $1) (fst $6)) (snd $1) (snd $3) (snd $6)) }
+  : FnName '(' ListNamedPort ')' ':' PegType { (Omni.Abs.spanBNFC'Position (fst $1) (fst $6), Omni.Abs.FnSig (Omni.Abs.spanBNFC'Position (fst $1) (fst $6)) (snd $1) (snd $3) (snd $6)) }
 
 NamedPort :: { (Omni.Abs.BNFC'Position, Omni.Abs.NamedPort) }
 NamedPort
@@ -261,8 +271,8 @@ Term2
 Term1 :: { (Omni.Abs.BNFC'Position, Omni.Abs.Term) }
 Term1
   : Term2 '(' ListTerm ')' { (Omni.Abs.spanBNFC'Position (fst $1) (uncurry Omni.Abs.BNFC'Position (tokenSpan $4)), Omni.Abs.EApplication (Omni.Abs.spanBNFC'Position (fst $1) (uncurry Omni.Abs.BNFC'Position (tokenSpan $4))) (snd $1) (snd $3)) }
-  | Term1 InfixOpIdent Term2 { (Omni.Abs.spanBNFC'Position (fst $1) (fst $3), Omni.Abs.EInfixOp (Omni.Abs.spanBNFC'Position (fst $1) (fst $3)) (snd $1) (snd $2) (snd $3)) }
-  | '{' ListComputationTerm '}' { (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan $1)) (uncurry Omni.Abs.BNFC'Position (tokenSpan $3)), Omni.Abs.EConSuspendedCom (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan $1)) (uncurry Omni.Abs.BNFC'Position (tokenSpan $3))) (snd $2)) }
+  | Term1 InfixOpName Term2 { (Omni.Abs.spanBNFC'Position (fst $1) (fst $3), Omni.Abs.EInfixOp (Omni.Abs.spanBNFC'Position (fst $1) (fst $3)) (snd $1) (snd $2) (snd $3)) }
+  | '{' ListComputationTerm '}' { (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan $1)) (uncurry Omni.Abs.BNFC'Position (tokenSpan $3)), Omni.Abs.EThunk (Omni.Abs.spanBNFC'Position (uncurry Omni.Abs.BNFC'Position (tokenSpan $1)) (uncurry Omni.Abs.BNFC'Position (tokenSpan $3))) (snd $2)) }
   | Term2 { (Omni.Abs.spanBNFC'Position (fst $1) (fst $1), (snd $1)) }
 
 Term :: { (Omni.Abs.BNFC'Position, Omni.Abs.Term) }
@@ -278,7 +288,8 @@ ListTerm
 
 Binding :: { (Omni.Abs.BNFC'Position, Omni.Abs.Binding) }
 Binding
-  : Name ':' ValueType '=' Term { (Omni.Abs.spanBNFC'Position (fst $1) (fst $5), Omni.Abs.BindAnnotated (Omni.Abs.spanBNFC'Position (fst $1) (fst $5)) (snd $1) (snd $3) (snd $5)) }
+  : Name '=' Term { (Omni.Abs.spanBNFC'Position (fst $1) (fst $3), Omni.Abs.Bind (Omni.Abs.spanBNFC'Position (fst $1) (fst $3)) (snd $1) (snd $3)) }
+  | Name ':' ValueType '=' Term { (Omni.Abs.spanBNFC'Position (fst $1) (fst $5), Omni.Abs.BindAnnotated (Omni.Abs.spanBNFC'Position (fst $1) (fst $5)) (snd $1) (snd $3) (snd $5)) }
 
 ListBinding :: { (Omni.Abs.BNFC'Position, [Omni.Abs.Binding]) }
 ListBinding

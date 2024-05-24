@@ -1,4 +1,6 @@
 error:
-duplicate identifier 'x' at test_resources\omni_bad\DuplicateParams.omni:3:10-3:11
-                            test_resources\omni_bad\DuplicateParams.omni:3:18-3:19
+duplicate identifier 'x'
+at
+test_resources\omni_bad\DuplicateParams.omni:3:10-3:11
+test_resources\omni_bad\DuplicateParams.omni:3:18-3:19
      

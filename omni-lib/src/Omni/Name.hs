@@ -1,6 +1,11 @@
+{-# LANGUAGE UndecidableInstances #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 module Omni.Name (
+  -- * A generic name that can be associated with any construct
+  GenericName (..),
+  ToGenericName (..),
+
   -- * Different kinds of names for different constructs
   ModuleName (..),
   Ident (..),
@@ -10,7 +15,26 @@ import Data.Hashable
 import Data.String
 import Data.Text
 import Omni.Abs qualified as Parsed
+import Omni.Locations (Loc)
 import Prettyprinter (Pretty (pretty))
+
+data GenericName = GenName Loc Text
+  deriving (Show)
+
+instance Eq GenericName where
+  GenName _ a == GenName _ b = a == b
+
+instance Ord GenericName where
+  GenName _ a <= GenName _ b = a <= b
+
+instance {-# OVERLAPPABLE #-} (Show n, ToGenericName n) => Pretty n where
+  pretty (toGeneric -> gen) = pretty gen
+
+class ToGenericName a where
+  toGeneric :: a -> GenericName
+
+instance ToGenericName GenericName where
+  toGeneric = id
 
 newtype ModuleName = ModuleName Text
   deriving (Eq, Ord, Show, IsString, Hashable)

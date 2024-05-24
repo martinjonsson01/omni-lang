@@ -2,12 +2,13 @@ module Omni.Rules (rules) where
 
 import Control.Arrow (first)
 import Control.Exception (IOException, catch)
+import Data.HashMap.Strict qualified as HashMap
 import Data.HashSet qualified as HashSet
 import Data.Sequence qualified as Seq
 import Data.Text qualified as Text
 import Data.Text.IO qualified as Text
 import Omni.Codegen.External
-import Omni.Config (Config, configBinariesDirectory, configInputDirectories, configInputFiles)
+import Omni.Config (Config, HasConfig (configMainModule), configBinariesDirectory, configInputDirectories, configInputFiles)
 import Omni.Imports
 import Omni.Name qualified as Name
 import Omni.Par qualified as Par
@@ -16,6 +17,7 @@ import Omni.Reporting qualified as Reporting
 import Omni.TypeCheck.L00AST qualified as L0
 import Omni.TypeCheck.L00ParseAST (convertParsed)
 import Omni.TypeCheck.L01Rename (renameIdents)
+import Omni.TypeCheck.L02Elaborate (elaborate)
 import Rock
 import Text.LLVM qualified as LLVM
 
@@ -54,18 +56,23 @@ rules conf (Writer (Writer key)) = case key of
           Left e -> failure $ Reporting.fileLoad path e
   ModuleFile name@(Name.ModuleName nameText) ->
     nonInput do
-      srcDirs <- fetch SourceDirectories
-      files <- fetch Files
-      let moduleFileName srcDir =
-            srcDir
-              </> joinPath (map Text.unpack $ Text.splitOn "." nameText)
-              <.> "omni"
-          potentialModulePaths = map moduleFileName srcDirs
-          modulePaths = filter (`HashSet.member` files) potentialModulePaths
-      case modulePaths of
-        [] -> failure $ Reporting.moduleNotFound name
-        [path] -> success $ Just path
-        path : _ -> return (Just path, Seq.singleton $ Reporting.duplicatedModule name modulePaths)
+      let inputFileNames = map (\path -> (takeBaseName path, path)) (conf ^. configInputFiles)
+          inputFileNameMap = HashMap.fromList inputFileNames
+      case HashMap.lookup (Text.unpack nameText) inputFileNameMap of
+        Just moduleFile -> success $ Just moduleFile
+        Nothing -> do
+          srcDirs <- fetch SourceDirectories
+          files <- fetch Files
+          let moduleFileName srcDir =
+                srcDir
+                  </> joinPath (map Text.unpack $ Text.splitOn "." nameText)
+                  <.> "omni"
+              potentialModulePaths = map moduleFileName srcDirs
+              modulePaths = filter (`HashSet.member` files) potentialModulePaths
+          case modulePaths of
+            [] -> failure $ Reporting.moduleNotFound name
+            [path] -> success $ Just path
+            path : _ -> return (Just path, Seq.singleton $ Reporting.duplicatedModule name modulePaths)
   ParsedFile path ->
     nonInput do
       contents <- fetch $ FileText path
@@ -79,7 +86,21 @@ rules conf (Writer (Writer key)) = case key of
         return defs
   RenamedFile path ->
     nonInput $ runCompileM conf do
-      fetchMaybe (ParsedFile path) >>= renameIdents
+      parsed <- fetchMaybe (ParsedFile path)
+      --traceM $ "parsed is\n" <> ppShow parsed 
+      renamed <- renameIdents parsed
+      --traceM $ "renamed is\n" <> ppShow renamed 
+      return renamed 
+  ElaboratedModule name ->
+    nonInput $ runCompileM conf do
+      fetchMaybe (ModuleFile name) >>= ((fetchMaybe . RenamedFile) >=> elaborate)
+  Modules ->
+    nonInput $
+      first (fromMaybe []) <$> runCompileM conf do
+        let mainModuleName = conf ^. configMainModule
+        mainMod <- fetchMaybe $ ElaboratedModule (Name.ModuleName mainModuleName)
+        -- todo: include all modules which main depends on/imports
+        return [mainMod]
   LLVMModule _ ->
     nonInput $
       (success . snd . LLVM.runLLVM) do

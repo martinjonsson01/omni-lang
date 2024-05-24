@@ -8,6 +8,7 @@ import Omni.Reporting qualified as Reporting
 import System.Directory
 import System.FilePath
 import Test.Syd
+import qualified Data.Text as Text
 
 spec :: Spec
 spec =
@@ -35,6 +36,7 @@ spec =
         binLoc = "test_resources" </> "bin" </> takeBaseName file
      in mempty
           { _configInputFiles = [srcFile]
+          , _configMainModule = Text.pack $ takeBaseName file
           , _configBinariesDirectory = binLoc
           , _configExecutableOutputPath = binLoc </> "program" <.> "exe"
           }

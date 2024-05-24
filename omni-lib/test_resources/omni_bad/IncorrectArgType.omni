@@ -1,0 +1,5 @@
+module IncorrectArgType()
+
+function(x: Int, y: Int) : Unit = ()
+
+main() : Unit = function(1, ())
