@@ -8,4 +8,4 @@ The type system is based on the typed lambda calculus [*System F*](https://en.wi
 
 ## References
 <a id="1">[1]</a> 
-S. Lindley, C. McBride, och C. McLaughlin, ”Do be do be do”. arXiv, 03 October 2017. doi: 10.48550/arXiv.1611.09259. Available at: http://arxiv.org/abs/1611.09259. [Accessed at: 02 juli 2024]
+S. Lindley, C. McBride, och C. McLaughlin, ”Do be do be do”. arXiv, 03 October 2017. doi: 10.48550/arXiv.1611.09259. Available at: http://arxiv.org/abs/1611.09259. [Accessed at: 02 July 2024]
